@@ -1,13 +1,11 @@
 <?php
-
-
 declare(strict_types=1);
 header('Content-Type: application/json');
 
-// ---------- CORS (optional) ----------
+
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') { http_response_code(204); exit; }
 
-// ---------- Helpers ----------
+// ---------- Helpers it ----------
 function env(string $k, ?string $d=null): string {
   $v = getenv($k);
   return ($v === false || $v === '') ? ($d ?? '') : $v;
