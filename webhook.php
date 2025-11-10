@@ -1,7 +1,5 @@
 <?php
-// webhook.php — Excrow Paystack webhook handler
-// Requires: PHP 8.1+, MySQL 8+, same DB as index.php
-// Env: PAYSTACK_SECRET_KEY, DB_HOST, DB_NAME, DB_USER, DB_PASS
+
 
 declare(strict_types=1);
 header('Content-Type: application/json');
