@@ -235,8 +235,7 @@ if ($eventType === 'charge.success') {
     mark_released($pdo, $escrowId, $amount, $ref);
   }
 } else {
-  // Unhandled types can just be acknowledged
-  // e.g., charge.failed, transfer.failed -> you may log or open dispute flow
+
 }
 
 // Always acknowledge so Paystack stops retrying
