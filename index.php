@@ -1,8 +1,5 @@
 <?php
-// index.php — Excrow mini API (single-file)
-// Drop in public/ or your webroot. Requires PHP 8.1+, MySQL 8+ (JSON supported).
 
-/* -------------------- Basic setup -------------------- */
 
 declare(strict_types=1);
 header('Content-Type: application/json');
