@@ -1,0 +1,3542 @@
+im done. should i provide the new files?
+so we can fix the live chat. i wanna trust you for the last time. i hope you still remember the style?
+
+paidlive has
+
+<?php
+/* paidLive.php — PERFECT TIKTOK LAYOUT */
+
+if (!isset($theLiveID) && isset($liveID)) { $theLiveID = $liveID; }
+
+$checkUserPurchasedThisLiveStream = '1';
+if ($userID != $liveCreator) {
+  $sessionKey = 'live_access_' . $liveID;
+  if (isset($_SESSION[$sessionKey]) && $_SESSION[$sessionKey] > (time() - 86400)) {
+    $checkUserPurchasedThisLiveStream = '1';
+  } else {
+    $checkUserPurchasedThisLiveStream = $iN->iN_CheckUserPurchasedThisLiveStream($userID, $liveID);
+    if ($checkUserPurchasedThisLiveStream) {
+      $_SESSION[$sessionKey] = time();
+    }
+  }
+}
+?>
+
+<?php if ($checkUserPurchasedThisLiveStream || $userType == '2') { ?>
+<style>
+/* ===== HIDE MOBILE MENU & HEADER ON LIVE PAGE ===== */
+body.live-active .mobile_footer_fixed_menu_container,
+body.live-active .header,
+body.live-active .live_left,
+body.live-active .live_video_header {
+  display: none !important;
+}
+
+body.live-active {
+  position: fixed !important;
+  inset: 0 !important;
+  overflow: hidden !important;
+  background: #000 !important;
+}
+
+/* ===== BASE STYLES ===== */
+:root {
+  --text: #fff;
+  --muted: #c9cbd3;
+  --accent: #ff2c55;
+  --blue: #2563eb;
+  --green: #10b981;
+  --tileBorder: #34d399;
+  --tileBorderDim: #6366f1;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  background: #000;
+  color: var(--text);
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, sans-serif;
+  overflow: hidden;
+}
+
+/* ===== LIVE CONTAINER ===== */
+.live-container {
+  position: fixed;
+  inset: 0;
+  margin: 0 auto;
+  background: #000;
+  overflow: hidden;
+  z-index: 99999;
+}
+
+@media (min-width: 600px) {
+  body {
+    background: #0e0e12;
+  }
+  .live-container {
+    max-width: 500px;
+    border-left: 1px solid #111827;
+    border-right: 1px solid #111827;
+  }
+}
+
+/* ===== VIDEO BACKGROUND LAYER ===== */
+.video-background {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: #000;
+}
+
+.video-background::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,.45), rgba(0,0,0,0) 25%, rgba(0,0,0,.7) 100%);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.video-background.blurred-bg {
+  background-size: cover;
+  background-position: center;
+  filter: blur(20px);
+  opacity: 0.3;
+}
+
+/* ===== AGORA VIDEO ELEMENTS ===== */
+#local-player,
+#local-player video,
+#remote-playerlist,
+.op-tile,
+.op-tile video,
+[id^="user-"],
+[id^="user-"] video {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  display: block;
+}
+
+/* ===== OVERLAY LAYER ===== */
+.overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+}
+
+
+
+/* ===== STAGE LAYOUTS ===== */
+
+/* LAYOUT 1: SOLO - Fullscreen */
+.stage.layout-solo {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.stage.layout-solo #local-player {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.stage.layout-solo #remote-playerlist {
+  display: none !important;
+}
+
+/* LAYOUT 2: DUO - Split */
+/* LAYOUT 2: DUO - Split (always 50/50, also on iOS) */
+.stage.layout-duo {
+  position:absolute;
+  left:10px;
+  right:10px;
+  top:70px;
+  height:55vh;
+  display:flex;              /* FLEX instead of grid */
+  gap:0;
+  border-radius:18px;
+  overflow:hidden;
+  pointer-events:auto;
+  box-shadow:0 8px 24px rgba(0,0,0,.45);
+  z-index:2;
+}
+
+.stage.layout-duo #local-player,
+.stage.layout-duo #remote-playerlist{
+  flex:1 1 0;               /* each gets 50% width */
+  position:relative;
+}
+
+.stage.layout-duo #local-player{
+  border-radius:18px 0 0 18px;
+  overflow:hidden;
+  background:rgba(0,0,0,.35);
+  border:2px solid var(--tileBorder);
+  border-right:1px solid rgba(255,255,255,.08);
+}
+
+.stage.layout-duo #remote-playerlist{
+  display:block !important;
+}
+
+.stage.layout-duo .op-tile{
+  position:relative;
+  width:100%;
+  height:100%;
+  border-radius:0 18px 18px 0;
+  overflow:hidden;
+  background:rgba(0,0,0,.35);
+  border:2px solid rgba(255,255,255,.08);
+  border-left:0;
+}
+
+
+/* LAYOUT 3: MULTI - Main + Grid */
+/* LAYOUT 3: MULTI - Host left, stack co-hosts on the right */
+.stage.layout-multi {
+  position:absolute;
+  left:10px;
+  right:10px;
+  top:70px;
+  height:55vh;
+  display:grid;
+  grid-template-columns:1.1fr 1fr; /* host wider */
+  gap:10px;
+  pointer-events:auto;
+  z-index:2;
+}
+
+/* Host tile stays big on the left */
+.stage.layout-multi #local-player{
+  position:relative;
+  border-radius:12px;
+  overflow:hidden;
+  background:rgba(0,0,0,.35);
+  border:2px solid var(--tileBorder);
+  box-shadow:0 8px 24px rgba(0,0,0,.45);
+}
+
+/* RIGHT SIDE = VERTICAL STACK, NO EMPTY BLACK SLOT */
+.stage.layout-multi #remote-playerlist{
+  display:flex !important;
+  flex-direction:column;
+  width:100%;
+  height:100%;
+  gap:10px;
+}
+
+/* Each co-host tile grows to share the column height */
+.stage.layout-multi .op-tile{
+  position:relative;
+  flex:1 1 0;           /* equal-height stack */
+  border-radius:12px;
+  overflow:hidden;
+  background:rgba(0,0,0,.35);
+  border:2px solid rgba(255,255,255,.08);
+}
+
+.stage.layout-multi .op-tile.active{
+  border-color:var(--tileBorderDim);
+}
+
+/* === REMOVE GREEN BORDER ON HOST TILE === */
+.stage.layout-duo #local-player,
+.stage.layout-multi #local-player{
+  border: none !important;
+}
+
+/* Tile meta tags */
+.tile-meta {
+  position: absolute;
+  left: 8px;
+  bottom: 8px;
+  background: rgba(0,0,0,.55);
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  z-index: 10;
+}
+
+.tile-meta .label {
+  font-weight: 600;
+}
+
+.tile-meta .name {
+  font-weight: 700;
+}
+.tile-follow-btn{
+  margin-left:6px;
+  padding:2px 9px;
+  border-radius:999px;
+  border:0;
+  font-size:11px;
+  font-weight:600;
+  background:linear-gradient(135deg,#FE2C55,#FF0050);
+  color:#fff;
+  cursor:pointer;
+  white-space:nowrap;
+  box-shadow:0 1px 5px rgba(254,44,85,.45);
+}
+
+.tile-follow-btn.is-following{
+  background:rgba(255,255,255,0.16);
+  color:#fff;
+  box-shadow:none;
+}
+
+
+/* ===== CHAT OVERLAY ===== */
+.chat-container {
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: 110px;
+  max-height: 40vh;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 50;
+}
+
+/* SOLO: Chat on video */
+.layout-solo ~ .overlay .chat-container {
+  bottom: 110px;
+}
+
+/* DUO/MULTI: Chat below stage */
+.layout-duo ~ .overlay .chat-container,
+.layout-multi ~ .overlay .chat-container {
+  top: calc(70px + 55vh + 8px);
+  bottom: 82px;
+  max-height: none;
+}
+
+.chat-messages {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  justify-content: flex-end;
+  height: 100%;
+}
+
+.chat-message {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  background: rgba(0,0,0,.45);
+  border: 1px solid rgba(255,255,255,.15);
+  backdrop-filter: blur(10px);
+  padding: 6px 10px;
+  border-radius: 16px;
+  width: max-content;
+  max-width: 85%;
+  opacity: 0;
+  transform: translateY(16px);
+  animation: fadeInUp .25s ease-out forwards;
+  pointer-events: auto;
+  word-wrap: break-word;
+}
+
+.chat-message.fade-out {
+  animation: fadeOutUp .5s ease-out forwards;
+}
+
+.chat-avatar {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255,255,255,.5);
+  flex: 0 0 26px;
+  object-fit: cover;
+}
+
+.chat-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.chat-username {
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+  text-decoration: none;
+}
+
+.chat-username:hover {
+  text-decoration: underline;
+}
+
+.chat-text {
+  font-size: 13px;
+  line-height: 1.35;
+  color: #fff;
+}
+
+.system-message {
+  align-self: flex-start;
+  background: rgba(255,255,255,.18);
+  border: 1px solid rgba(255,255,255,.25);
+  border-radius: 16px;
+  padding: 6px 12px;
+  font-size: 12px;
+  opacity: 0;
+  transform: translateY(16px);
+  animation: fadeInUp .25s ease-out forwards;
+  pointer-events: auto;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeOutUp {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-20px);
+    max-height: 0;
+    margin: 0;
+    padding: 0;
+  }
+}
+
+/* ===== BOTTOM COMPOSER ===== */
+.bottom-bar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 8px 10px 12px;
+  background: linear-gradient(180deg, rgba(0,0,0,0), rgba(0,0,0,.85));
+  pointer-events: auto;
+  z-index: 100;
+}
+	/* FORCE LIVE COMPOSER BAR TO TRUE BOTTOM */
+.live-container .bottom-bar{
+  position: fixed !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  bottom: 0 !important;
+  width: 100%;
+  max-width: 430px;      /* same as live-container on desktop */
+  z-index: 120 !important;
+  padding: 8px 10px 12px;
+  background: linear-gradient(180deg, rgba(0,0,0,0), rgba(0,0,0,.85));
+}
+
+
+.composer-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.message-input-wrapper {
+  flex: 1;
+  background: rgba(255,255,255,.18);
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.25);
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  backdrop-filter: blur(10px);
+}
+
+.message-input {
+  flex: 1;
+  background: transparent;
+  border: 0;
+  outline: 0;
+  color: #fff;
+  font-size: 14px;
+}
+
+.message-input::placeholder {
+  color: rgba(255,255,255,.7);
+}
+
+.actions-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mini {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: rgba(255,255,255,.15);
+  border: 1px solid rgba(255,255,255,.18);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.mini:hover {
+  transform: scale(1.1);
+}
+
+.mini svg {
+  width: 16px;
+  height: 16px;
+  fill: #fff;
+}
+
+.mini.action {
+  background: rgba(255,255,255,.18);
+}
+
+.action.gift {
+  background: var(--accent);
+}
+
+.action.co {
+  background: var(--blue);
+}
+
+.action.share {
+  background: var(--green);
+}
+	/* Badge on blue co-host icon (bottom) */
+.mini.action.co{
+  position: relative;
+}
+
+.co-pending-badge{
+  position:absolute;
+  top:-4px;
+  right:-4px;
+  min-width:16px;
+  height:16px;
+  padding:0 4px;
+  border-radius:999px;
+  background:#ef4444;
+  color:#fff;
+  font-size:10px;
+  font-weight:700;
+  display:none;
+  align-items:center;
+  justify-content:center;
+}
+/* Hide the old top badge completely – we only use the blue-icon badge */
+#opBadge{
+  display:none !important;
+}
+
+
+/* ===== GIFT MODAL - TIKTOK SLIDE UP ===== */
+/* TikTok-style gift sheet – always on top, centered under the live column */
+/* ===== GIFT MODAL - TIKTOK SLIDE UP ===== */
+.live_footer_holder {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: 430px;
+  width: 100%;
+  bottom: -100%;                 /* hidden by default */
+  max-height: 60vh;              /* sheet height */
+  background: #111827;           /* dark shell */
+  backdrop-filter: blur(20px);
+  z-index: 200000 !important;
+  transition: bottom 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 20px 20px 0 0;
+  pointer-events: none;
+  display: block !important;
+}
+
+.live_footer_holder.live_footer_holder_show {
+  bottom: 0;   /* sit just above the bottom bar; adjust 52–60px if needed */
+  pointer-events: auto;
+}
+
+
+.gift-modal-header {
+  position: sticky;
+  top: 0;
+  background: #111827;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  z-index: 10;
+}
+
+.gift-modal-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.gift-modal-close {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.08);
+  border: 0;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  cursor: pointer;
+  font-size: 20px;
+  transition: all 0.2s;
+}
+.gift-modal-close:hover {
+  background: rgba(255,255,255,0.18);
+  transform: scale(1.05);
+}
+
+/* ==== GIFT LIST INSIDE SHEET ==== */
+.live_gif_coins_list{
+  background: #ffffff;
+  padding: 12px 12px 16px;
+  overflow-y: auto;
+  max-height: calc(60vh - 64px);   /* below header */
+  border-radius: 0 0 20px 20px;
+}
+
+.live_gif_coins_list_wrapper{
+  padding: 4px 0 4px;
+}
+
+/* Swiper strip */
+.live_gif_coins_list .swiper{
+  width: 100%;
+  padding: 8px 8px 16px;
+}
+
+.live_gif_coins_list .swiper-wrapper{
+  align-items: stretch;
+}
+
+.live_gif_coins_list .swiper-slide{
+  display: flex;
+  justify-content: center;
+	width:140px !important;
+}
+
+/* Individual gift card */
+.live_gift_coin_container{
+  background: #f9fafb;
+  border-radius: 16px;
+  padding: 8px 10px;
+  border: 1px solid #e5e7eb;
+  min-width: 120px;
+  max-width: 140px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.live_gift_coin_avatar img{
+  display:block;
+}
+
+.live_gift_coin_name{
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+  color: #111827;
+}
+
+.live_gift_coin_amount,
+.live_gift_coin_price{
+  font-size: 12px;
+  text-align: center;
+  color: #4b5563;
+}
+
+.live_gift_coin_btn .live_coin_send{
+  border-radius: 999px;
+  border: 0;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  background: #f97316;
+  color: #111827;
+  cursor:pointer;
+}
+
+/* arrows */
+.swiper-button-next.sw,
+.swiper-button-prev.sw{
+  color:#111827;
+}
+
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .stage.layout-duo,
+  .stage.layout-multi {
+    top: 65px;
+    height: 52vh;
+  }
+  
+  .chat-container {
+    left: 8px;
+    right: 8px;
+  }
+}
+
+/* Desktop hide mobile quit */
+@media (min-width: 769px) {
+  .icon-btn.mobile-quit {
+    display: none;
+  }
+}
+	/* Hide floating "Request co-host" bubble - we use only blue icon at bottom */
+
+/* ==== LIVE LIKE BUTTON STATE FIX ==== */
+/* Force host header like button behaviour */
+.live-header .live-heart-btn .heart_off { display:inline-block; }
+.live-header .live-heart-btn .heart_on  { display:none; }
+.live-header .live-heart-btn.liked .heart_off { display:none; }
+.live-header .live-heart-btn.liked .heart_on  { display:inline-block; }
+
+
+/* ==== KILL OLD "REQUEST CO-HOST" BUBBLE ON TOP ==== */
+.live_request_to_host,
+.live-request-to-host,
+.live_request_host,
+.live_request_bubble,
+.live_header_request_to_host {
+  display: none !important;
+}
+/* --- HARD FORCE: remote / co-host videos fill the tile --- */
+.stage.layout-duo #remote-playerlist,
+.stage.layout-duo #remote-playerlist > div,
+.stage.layout-duo #remote-playerlist > .op-tile{
+  position: relative;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.stage.layout-multi #remote-playerlist,
+.stage.layout-multi #remote-playerlist > div,
+.stage.layout-multi #remote-playerlist > .op-tile{
+  position: relative;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Any video inside remote tiles – make it cover fully */
+.stage.layout-duo #remote-playerlist video,
+.stage.layout-multi #remote-playerlist video{
+  position: absolute !important;
+  top: 0;
+  left: 0;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+/* ===== HUD mic/cam visibility ===== */
+/* Assume mic button has .hud-mic and cam has .hud-cam on _hud.php */
+
+/* ===== HUD mic/cam visibility (host + co-host) ===== */
+body:not(.is-host):not(.cohost-active) #liveToggleMic,
+body:not(.is-host):not(.cohost-active) #liveToggleCam{
+  display:none !important; /* normal viewers see nothing */
+}
+
+/* Host always sees them */
+body.is-host #liveToggleMic,
+body.is-host #liveToggleCam{
+  display:flex !important;
+}
+
+/* Approved co-host also sees them */
+body.cohost-active #liveToggleMic,
+body.cohost-active #liveToggleCam{
+  display:flex !important;
+}
+
+
+	
+</style>
+
+<div class="live-container" id="<?php echo iN_HelpSecure($liveID);?>">
+
+  <!-- VIDEO BACKGROUND LAYER -->
+  <div class="video-background" id="videoBackground"></div>
+
+  <!-- STAGE (video tiles) -->
+  <div class="stage layout-solo" id="liveStage">
+    <div id="local-player"></div>
+    <div id="remote-playerlist"></div>
+  </div>
+
+  <!-- OVERLAY -->
+  <div class="overlay">
+
+    <!-- HEADER -->
+   <?php include "_hud.php"; ?>
+
+    <!-- CHAT CONTAINER -->
+    <div class="chat-container">
+      <div class="chat-messages" id="chatMessages">
+        <?php include "liveChat.php";?>
+      </div>
+    </div>
+
+    <!-- BOTTOM COMPOSER -->
+    <div class="bottom-bar">
+      <div class="composer-row">
+        <div class="message-input-wrapper">
+          <input id="messageInput" 
+                 class="message-input lmSize" 
+                 placeholder="<?php echo iN_HelpSecure($LANG['say_something'] ?? 'Say something...');?>" />
+        </div>
+        
+        <div class="actions-row">
+          <?php if($p_friend_status != 'me'){?>
+            <div class="mini action gift live_gift_call" title="<?php echo iN_HelpSecure($LANG['send_gift'] ?? 'Send Gift');?>">
+              <svg viewBox="0 0 24 24"><path d="M20 7h-2.18A3 3 0 0 0 12 5.1 3 3 0 0 0 6.18 7H4v4h16V7ZM3 12v8h9v-8Zm18 0h-7v8h7Z"/></svg>
+            </div>
+          <?php }?>
+          
+       <div class="mini action co" id="opTogglePanel" title="<?php echo iN_HelpSecure($LANG['co_host'] ?? 'Co-host');?>">
+
+  <svg viewBox="0 0 24 24"><path d="M15 8a4 4 0 1 1-4-4 4 4 0 0 1 4 4Zm-9 9a6 6 0 0 1 12 0v3H6Zm12.5-6.5h-1.5V9h-1.5v1.5H14v1.5h1.5V13h1.5v-1.5H18Z"/></svg>
+
+  <!-- small red badge for pending co-host requests -->
+  <span class="co-pending-badge" id="coPendingBadge">0</span>
+</div>
+
+          
+          <div class="mini action share" id="shareBtn" title="<?php echo iN_HelpSecure($LANG['share'] ?? 'Share');?>">
+            <svg viewBox="0 0 24 24"><path d="M18 8a3 3 0 1 0-2.83-4H15l-7 4a3 3 0 1 0 0 4l7 4a3 3 0 1 0 .83-1.82l-7-4A3 3 0 0 0 8 10a3 3 0 0 0 0-.18l7-4A3 3 0 0 0 18 8Z"/></svg>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- CO-HOST UI PANEL -->
+    <style>
+      /* ===== CO-HOST UI (host + viewer) ===== */
+      #opSeatUI{
+        position:absolute;
+        inset:0;
+        pointer-events:none;
+        z-index:200; /* above header + chat + bottom bar */
+        font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif;
+      }
+/* Hide the big "Request co-host" bubble, but keep status text working */
+#opSendRequest{
+  display:none;
+}
+
+      /* ===== Host view ===== */
+      #opHostView{
+        position:absolute;
+        right:10px;
+        bottom:90px;
+        pointer-events:auto;
+        display:none; /* JS will set to block if host */
+      }
+
+      #opBadge{
+        position:absolute;
+        top:-4px;
+        right:-4px;
+        min-width:18px;
+        height:18px;
+        padding:0 4px;
+        border-radius:999px;
+        background:#ef4444;
+        color:#fff;
+        font-size:11px;
+        font-weight:700;
+        display:none;
+        align-items:center;
+        justify-content:center;
+      }
+
+      #opPanel{
+        position:fixed;
+        right:-320px;
+        top:70px;
+        width:280px;
+        max-width:80vw;
+        bottom:80px;
+        background:rgba(15,23,42,.97);
+        border-radius:16px 0 0 16px;
+        box-shadow:-4px 0 30px rgba(0,0,0,.55);
+        border-left:1px solid rgba(148,163,184,.4);
+        color:#e5e7eb;
+        display:flex;
+        flex-direction:column;
+        opacity:0;
+        pointer-events:none;
+        transition:all .25s ease-out;
+        z-index:210;
+      }
+      #opPanel.open{
+        right:0;
+        opacity:1;
+        pointer-events:auto;
+      }
+
+      .op-panel-header{
+        padding:10px 12px 6px;
+        border-bottom:1px solid rgba(148,163,184,.4);
+        display:flex;
+        align-items:center;
+        gap:8px;
+      }
+      .op-title{
+        font-size:14px;
+        font-weight:700;
+        flex:1;
+      }
+      .op-tabs{
+        display:flex;
+        gap:4px;
+      }
+      .op-tab{
+        border:0;
+        padding:4px 6px;
+        border-radius:999px;
+        font-size:11px;
+        color:#e5e7eb;
+        background:transparent;
+        cursor:pointer;
+      }
+      .op-tab.active{
+        background:#1d4ed8;
+      }
+      #opClosePanel{
+        border:0;
+        background:transparent;
+        color:#9ca3af;
+        cursor:pointer;
+        font-size:16px;
+        padding:0 2px;
+      }
+      #opClosePanel:hover{color:#e5e7eb;}
+
+      #opRequestsList{
+        flex:1;
+        overflow-y:auto;
+        padding:8px 10px 10px;
+      }
+      .op-empty{
+        font-size:12px;
+        color:#9ca3af;
+        padding:12px 4px;
+        text-align:center;
+      }
+
+      .op-item{
+        display:flex;
+        align-items:center;
+        gap:8px;
+        padding:6px 4px;
+        border-radius:10px;
+      }
+      .op-item:hover{
+        background:rgba(15,23,42,.8);
+      }
+      .op-avatar{
+        width:32px;
+        height:32px;
+        border-radius:50%;
+        object-fit:cover;
+        border:1px solid rgba(148,163,184,.7);
+        flex-shrink:0;
+      }
+      .op-info{
+        flex:1;
+        min-width:0;
+      }
+      .op-name a{
+        font-size:13px;
+        font-weight:600;
+        color:#e5e7eb;
+        text-decoration:none;
+      }
+      .op-name a:hover{text-decoration:underline;}
+      .op-username a{
+        font-size:11px;
+        color:#9ca3af;
+        text-decoration:none;
+      }
+      .op-username a:hover{text-decoration:underline;}
+
+      .op-actions{
+        display:flex;
+        flex-direction:column;
+        gap:4px;
+      }
+      .op-btn{
+        border:0;
+        border-radius:999px;
+        padding:3px 8px;
+        font-size:11px;
+        cursor:pointer;
+        white-space:nowrap;
+      }
+      .op-btn-approve{
+        background:#22c55e;
+        color:#022c22;
+      }
+      .op-btn-decline{
+        background:#b91c1c;
+        color:#fee2e2;
+      }
+      .op-btn-remove{
+        background:#0f172a;
+        color:#e5e7eb;
+        border:1px solid rgba(148,163,184,.6);
+      }
+
+      /* Pending/approved/declined counts text */
+      #opPendingCount,
+      #opApprovedCount,
+      #opDeclinedCount{
+        margin-left:2px;
+        font-size:11px;
+        opacity:.8;
+      }
+
+      /* ===== Viewer view ===== */
+      #opViewerView{
+        position:absolute;
+        right:10px;
+        bottom:90px;
+        pointer-events:auto;
+        display:none; /* JS sets block for non-host */
+      }
+
+      .opSendRequestBtn{
+        display:flex;
+        align-items:center;
+        gap:6px;
+        padding:8px 12px;
+        border-radius:999px;
+        border:0;
+        background:rgba(15,23,42,.9);
+        color:#e5e7eb;
+        font-size:12px;
+        cursor:pointer;
+        box-shadow:0 6px 18px rgba(0,0,0,.6);
+      }
+
+      #opSendRequest span:first-child{font-size:14px;}
+      #opSendRequest:hover{
+        background:rgba(30,64,175,.95);
+      }
+
+      #opViewerStatus{
+        margin-top:6px;
+        font-size:11px;
+      }
+      .op-status-chip{
+        display:inline-flex;
+        align-items:center;
+        gap:4px;
+        padding:4px 8px;
+        border-radius:999px;
+      }
+      .op-status-chip.pending{
+        background:rgba(37,99,235,.25);
+        color:#bfdbfe;
+      }
+      .op-status-chip.approved{
+        background:rgba(34,197,94,.25);
+        color:#bbf7d0;
+      }
+      .op-status-chip.rejected{
+        background:rgba(239,68,68,.25);
+        color:#fecaca;
+      }
+      .op-spinner{
+        width:10px;
+        height:10px;
+        border-radius:50%;
+        border:2px solid rgba(191,219,254,.2);
+        border-top-color:#bfdbfe;
+        animation:op-spin 0.8s linear infinite;
+      }
+      @keyframes op-spin{
+        to{transform:rotate(360deg);}
+      }
+
+      @media(max-width:480px){
+        #opPanel{
+          top:60px;
+          bottom:75px;
+          width:260px;
+        }
+      }
+
+
+    </style>
+
+    <div id="opSeatUI">
+      <!-- HOST SIDE (creator) -->
+      <div id="opHostView">
+        <!-- Badge sits over your blue cohost icon via absolute position, but JS only uses counts -->
+        <div id="opBadge">0</div>
+        <!-- Sliding panel -->
+        <div id="opPanel">
+          <div class="op-panel-header">
+            <div class="op-title">Co-hosts</div>
+            <div class="op-tabs">
+              <button class="op-tab active" data-tab="pending">
+                Pending <span id="opPendingCount"></span>
+              </button>
+              <button class="op-tab" data-tab="approved">
+                Live <span id="opApprovedCount"></span>
+              </button>
+              <button class="op-tab" data-tab="declined">
+                Declined <span id="opDeclinedCount"></span>
+              </button>
+            </div>
+            <button id="opClosePanel">✕</button>
+          </div>
+          <div id="opRequestsList">
+            <div class="op-empty">📭 No requests yet</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- VIEWER SIDE (normal users) -->
+      <div id="opViewerView">
+        <button id="opSendRequest">
+          <span>🎭</span>
+          <span><?php echo iN_HelpSecure($LANG['co_host'] ?? 'Request co-host'); ?></span>
+        </button>
+        <div id="opViewerStatus"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Gift modal -->
+<div class="live_footer_holder" id="giftModal">
+  <div class="gift-modal-header">
+    <div class="gift-modal-title"><?php echo iN_HelpSecure($LANG['send_gift'] ?? 'Send Gift');?></div>
+    <button class="gift-modal-close" id="closeGiftModal">✕</button>
+  </div>
+  <?php if($p_friend_status != 'me'){?>
+    <?php include "liveCoinList.php";?>
+  <?php }?>
+</div>
+
+<?php if($userID != $liveCreator){ $iN->iN_InsertMyOnlineStatus($userID, $liveID); } ?>
+
+<script>
+  document.body.classList.add('live-active');
+  
+  window.siteurl = "<?php echo iN_HelpSecure($base_url);?>";
+  window.liveAppID = "<?php echo iN_HelpSecure($agoraAppID);?>";
+  window.liveChannel = "<?php echo iN_HelpSecure($liveChannel);?>";
+  window.liveUserID = "<?php echo iN_HelpSecure($userID);?>";
+  window.liveCreator = "<?php echo iN_HelpSecure($liveCreator);?>";
+  window.theLiveID = "<?php echo iN_HelpSecure($theLiveID);?>";
+  window.liveCreatorAvatar = "<?php echo iN_HelpSecure($liveCreatorAvatar);?>";
+</script>
+
+<script src="https://download.agora.io/sdk/release/AgoraRTC_N.js"></script>
+<script>
+(function(){
+  // Bless videos
+  function bless(v){
+    if(!v) return;
+    v.setAttribute('playsinline','');
+    v.setAttribute('webkit-playsinline','');
+    v.autoplay = true;
+    v.muted = true;
+    v.style.objectFit='cover';
+    v.style.width='100%';
+    v.style.height='100%';
+    v.play && v.play().catch(()=>{});
+  }
+  
+  const mo = new MutationObserver(m=>m.forEach(x=>x.addedNodes.forEach(n=>{
+    if(n.tagName==='VIDEO') bless(n);
+    if(n.querySelectorAll) n.querySelectorAll('video').forEach(bless);
+  })));
+  mo.observe(document.body,{childList:true,subtree:true});
+  
+  document.addEventListener('click',function once(){
+    document.querySelectorAll('video').forEach(v=>v.play && v.play().catch(()=>{}));
+    document.removeEventListener('click',once,true);
+  },true);
+  
+  // Chat auto-remove old messages
+  setInterval(()=>{
+    const messages = document.querySelectorAll('.chat-message, .system-message');
+    if(messages.length > 6){
+      for(let i = 0; i < messages.length - 6; i++){
+        messages[i].classList.add('fade-out');
+        setTimeout(()=>messages[i].remove(), 500);
+      }
+    }
+  }, 2000);
+  
+   // Gift modal handlers (delegated, works even if DOM changes)
+  document.addEventListener('click', function(e){
+    var giftBtn = e.target.closest('.live_gift_call');
+    if (giftBtn) {
+      e.preventDefault();
+      var modal = document.getElementById('giftModal');
+      if (modal) {
+        modal.classList.add('live_footer_holder_show');
+      }
+    }
+  });
+
+  document.addEventListener('click', function(e){
+    if (e.target && e.target.id === 'closeGiftModal') {
+      e.preventDefault();
+      var modal = document.getElementById('giftModal');
+      if (modal) {
+        modal.classList.remove('live_footer_holder_show');
+      }
+    }
+  });
+
+  
+  // Share button
+  document.getElementById('shareBtn')?.addEventListener('click', ()=>{
+    if(navigator.share){
+      navigator.share({
+        title: 'Live Stream',
+        text: 'Join my live stream!',
+        url: window.location.href
+      }).catch(()=>{});
+    } else {
+      prompt('Share this URL:', window.location.href);
+    }
+  });
+	
+	  // ===== Co-host: use blue bottom icon as the trigger =====
+  // Viewer side: click blue icon -> fake click on #opSendRequest (handled by cohost-ui.js)
+    // Viewer: use blue co-host icon (bottom) to trigger the hidden request button
+	  var coIcon     = document.getElementById('opTogglePanel');
+  var requestBtn = document.getElementById('opSendRequest');
+
+  // viewerOnly = true  if current user is NOT the live creator
+  var viewerOnly = (window.liveUserID && window.liveCreator &&
+                    window.liveUserID !== window.liveCreator);
+
+  if (coIcon && requestBtn && viewerOnly){
+    coIcon.addEventListener('click', function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      requestBtn.click(); // viewer flow (send co-host request)
+    }, false);
+  }
+
+
+  // === FIX: move pending count from the close button to our red badge ===
+  // === FIX: move pending count from the close button to the BLUE co-host icon ===
+  // === Sync pending co-host count to the blue icon badge ===
+  function syncCoHostBadge(){
+    var badge    = document.getElementById('coPendingBadge');
+    if (!badge) return;
+
+    var count = 0;
+
+    // 1) Main source: tab "Pending (1)" span
+    var pendSpan = document.getElementById('opPendingCount');
+    if (pendSpan){
+      var t1 = (pendSpan.textContent || '').trim();
+      var n1 = parseInt(t1.replace(/\D/g,''), 10);
+      if (!isNaN(n1)) count = Math.max(count, n1);
+    }
+
+    // 2) Old badge (#opBadge) – cohost-ui may still update this
+    var oldBadge = document.getElementById('opBadge');
+    if (oldBadge){
+      var t2 = (oldBadge.textContent || '').trim();
+      var n2 = parseInt(t2.replace(/\D/g,''), 10);
+      if (!isNaN(n2)) count = Math.max(count, n2);
+      // keep it invisible
+      oldBadge.style.display = 'none';
+    }
+
+    // 3) Safety: if some script writes "✕ 2" on the close button
+    var closeBtn = document.getElementById('opClosePanel');
+    if (closeBtn){
+      var t3 = (closeBtn.textContent || '').trim();
+      var n3 = parseInt(t3.replace(/\D/g,''), 10);
+      if (!isNaN(n3)) count = Math.max(count, n3);
+      // ALWAYS force the close button to plain ✕
+      closeBtn.textContent = '✕';
+    }
+
+    // Finally, apply to our blue icon badge
+    if (count > 0){
+      badge.textContent   = count;
+      badge.style.display = 'flex';
+    } else {
+      badge.textContent   = '0';
+      badge.style.display = 'none';
+    }
+  }
+
+  // Run every 800ms so it feels live but not too heavy
+  setInterval(syncCoHostBadge, 800);
+  /* ===== Host vs Viewer: close button ===== */
+
+
+
+})();
+	
+	
+</script>
+<script src="<?php echo $base_url;?>themes/<?php echo $currentTheme;?>/js/liveStreamingFullHandler.js?v=<?php echo $version;?>"></script>
+<script src="<?php echo $base_url;?>themes/<?php echo $currentTheme;?>/js/cohost-ui.js?v=<?php echo $version;?>"></script>
+
+<?php } else { /* Paywall */ ?>
+<div class="live_wrapper">
+  <div class="i_liv_stream_video relativePosition backgroundBlack">
+    <div class="i_modal_bg_in i_modal_display_in">
+      <div class="i_modal_in_in i_sf_box">
+        <div class="i_modal_content">
+          <div class="purchase_premium_header flex_ tabing border_top_radius">
+            <?php echo iN_HelpSecure($LANG['join_the_live_broadcast']);?>
+          </div>
+          <div class="purchase_post_details">
+            <div class="wallet-debit-confirm-container flex_">
+              <div class="owner_avatar" style="background-image:url(<?php echo iN_HelpSecure($liveCreatorAvatar);?>);"></div>
+              <div class="album-details"><?php echo iN_HelpSecure($LANG['paying_point_for_live_streaming']);?></div>
+              <div class="album-wanted-point">
+                <div><?php echo html_entity_decode($liveCredit);?></div>
+                <span><?php echo iN_HelpSecure($LANG['points']);?></span>
+              </div>
+            </div>
+          </div>
+          <div class="i_modal_g_footer">
+            <div class="alertBtnRight joinLiveStream transition" id="<?php echo iN_HelpSecure($liveID);?>">
+              <?php echo iN_HelpSecure($LANG['confirm']);?>
+            </div>
+            <div id="cancel-live-purchase" class="alertBtnLeft no-del transition"><?php echo iN_HelpSecure($LANG['cancel']);?></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<?php } ?>
+
+livechat has
+
+<?php
+/* liveChat.php - PERFECT TikTok-style chat bubbles */
+$liveMessageList = $iN->iN_LiveChatMessages($theLiveID, $userID);
+if (!empty($liveMessageList)) {
+    foreach ($liveMessageList as $lmData) {
+        $messageID = $lmData['cm_id'] ?? null;
+        $messageLiveUserID = $lmData['cm_iuid_fk'] ?? null;
+        $liveMessage = $lmData['cm_message'] ?? '';
+        $giftSended = $lmData['cm_gift_type'] ?? null;
+        
+        $msgData = $iN->iN_GetUserDetails($messageLiveUserID);
+        $msgUserName = $msgData['i_username'] ?? '';
+        $msgUserFullName = $msgData['i_user_fullname'] ?? '';
+        $msgUserAvatar = $msgData['user_avatar'] ?? ($base_url . 'content/themes/default/images/default_avatar.jpg');
+        
+        if ($fullnameorusername === 'no') {
+            $msgUserFullName = $msgUserName;
+        }
+        
+        $getLiveGiftDataFromID = $iN->GetLivePlanDetails($giftSended);
+        $giftImage = $getLiveGiftDataFromID['gift_image'] ?? '';
+        $giftHTML = '';
+        
+        if (!empty($giftSended) && !empty($giftImage)) {
+            $giftHTML = '<img src="' . iN_HelpSecure($base_url . $giftImage) . '" alt="Gift" loading="lazy" width="20" style="margin-left:4px;" />';
+        }
+        
+        $userProfileURL = iN_HelpSecure($base_url . $msgUserName);
+        $safeFullName = iN_HelpSecure($msgUserFullName);
+        $safeMessage = iN_HelpSecure($liveMessage);
+        $safeMessageID = iN_HelpSecure($messageID);
+        $safeAvatar = iN_HelpSecure($msgUserAvatar);
+?>
+        <div class="chat-message" id="msg_<?php echo $safeMessageID; ?>">
+            <img class="chat-avatar" src="<?php echo $safeAvatar; ?>" alt="<?php echo $safeFullName; ?>">
+            <div class="chat-content">
+                <a class="chat-username" href="<?php echo $userProfileURL; ?>" target="_blank"><?php echo $safeFullName; ?></a>
+                <div class="chat-text"><?php echo $safeMessage; ?><?php echo $giftHTML; ?></div>
+            </div>
+        </div>
+<?php
+    }
+}
+?>
+
+hud has
+<?php
+/* _hud.php — TikTok style live header */
+
+// Try to get host basics safely
+$hostUsername = $liveCreatorUserName
+    ?? $p_username
+    ?? $username
+    ?? '';
+
+$hostAvatar = $liveCreatorAvatar
+    ?? $profileAvatar
+    ?? $userAvatar
+    ?? '';
+
+$hostHearts = (int) (
+    $liveLikes
+    ?? $liveLike
+    ?? $total_live_likes
+    ?? 0
+);
+
+// try to use server start time if it exists, else now
+$liveStartTs = (int) (
+    $liveStartTime
+    ?? $live_started_at
+    ?? $liveCreatedTime
+    ?? time()
+);
+
+// TRUE if current user is the live creator
+$isHost = (isset($userID) && isset($liveCreator) && (string)$userID === (string)$liveCreator);
+?>
+<script>
+  // expose host/viewer info for JS below
+  window.liveIsHost = <?php echo $isHost ? 'true' : 'false'; ?>;
+</script>
+<?php
+
+if (!function_exists('mf_live_short_count')) {
+    function mf_live_short_count($n) {
+        if ($n >= 1000000) {
+            return round($n / 1000000, 1) . 'M';
+        }
+        if ($n >= 1000) {
+            return round($n / 1000, 1) . 'K';
+        }
+        return (string) $n;
+    }
+}
+
+$hostHeartsText = mf_live_short_count($hostHearts);
+$followLabel    = iN_HelpSecure($LANG['follow_live']    ?? '+ Follow');
+$followingLabel = iN_HelpSecure($LANG['following_live'] ?? '✓ Following');
+
+?>
+
+<style>
+/* ==== LIVE HEADER (TikTok style) ==== */
+
+.live-header{
+  position:absolute;
+  left:0; right:0; top:0;
+  padding:10px;
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  background:linear-gradient(180deg, rgba(0,0,0,.7), rgba(0,0,0,0));
+  pointer-events:auto;
+  z-index:50;
+  color:#fff;
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif;
+}
+
+/* LEFT SIDE = host pill + timer/live row */
+.live-header-left{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  max-width:70%;
+}
+
+/* Host pill */
+.live-host-pill{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:6px 10px;
+  background:rgba(15,23,42,.85);
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.12);
+}
+
+.live-profile-pic{
+  width:36px;
+  height:36px;
+  border-radius:50%;
+  border:2px solid rgba(255,255,255,.9);
+  object-fit:cover;
+  flex-shrink:0;
+}
+
+.live-host-text{
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+}
+
+.live-username-row{
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+
+.live-username{
+  font-size:14px;
+  font-weight:700;
+  max-width:110px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.live-follow-btn{
+  background:linear-gradient(135deg, #FE2C55, #FF0050);
+  color:#fff;
+  border:0;
+  padding:5px 14px;
+  border-radius:999px;
+  font-weight:700;
+  font-size:12px;
+  box-shadow:0 2px 8px rgba(254,44,85,.4);
+  cursor:pointer;
+  white-space:nowrap;
+}
+
+.live-follow-btn.is-following{
+  background:rgba(255,255,255,0.16);
+  color:#fff;
+  box-shadow:none;
+}
+
+.live-heart-row{
+  display:flex;
+  align-items:center;
+  gap:4px;
+  font-size:12px;
+  opacity:.95;
+}
+.live-heart-row .icon{
+  font-size:13px;
+}
+
+/* Timer + LIVE row */
+.live-meta-row{
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+
+.live-timer-chip,
+.live-live-chip{
+  padding:4px 10px;
+  border-radius:999px;
+  font-size:11px;
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+  background:rgba(15,23,42,.9);
+  border:1px solid rgba(148,163,184,.7);
+}
+
+.live-live-chip{
+  background:#ef4444;
+  border-color:#f97373;
+  font-weight:700;
+}
+
+/* RIGHT SIDE = viewers + like + close */
+.live-header-right{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+/* Mic / Cam toggle icon states */
+#liveToggleMic .mic-off,
+#liveToggleCam .cam-off{
+  display:none;
+}
+
+#liveToggleMic.muted .mic-on{
+  display:none;
+}
+#liveToggleMic.muted .mic-off{
+  display:inline-flex;
+}
+
+#liveToggleCam.off .cam-on{
+  display:none;
+}
+#liveToggleCam.off .cam-off{
+  display:inline-flex;
+}
+
+#liveToggleMic span,
+#liveToggleCam span{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+}
+
+#liveToggleMic svg,
+#liveToggleCam svg{
+  width:18px;
+  height:18px;
+}
+
+/* viewer bubble */
+.live-viewer-count{
+  background:rgba(15,23,42,.85);
+  padding:6px 12px;
+  border-radius:999px;
+  border:1px solid rgba(148,163,184,.7);
+  font-size:13px;
+  font-weight:700;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  backdrop-filter:blur(8px);
+}
+
+
+.live-viewer-count .icon{
+  font-size:14px;
+}
+
+/* circle icon buttons */
+/* circle icon buttons */
+.live-icon-btn{
+  width:36px;
+  height:36px;
+  border-radius:50%;
+  background:rgba(15,23,42,.85);
+  border:1px solid rgba(148,163,184,.7);
+  display:grid;
+  place-items:center;
+  color:#fff;
+  cursor:pointer;
+  font-size:17px;
+  backdrop-filter:blur(8px);
+  transition:background .18s ease, border-color .18s ease, transform .12s ease;
+}
+
+/* use site primary instead of random blue */
+.live-icon-btn:hover{
+  background:#CB0C9F;            /* <— your main site colour */
+  border-color:#f9a8d4;
+  transform:translateY(-1px);
+}
+/* make the SVGs white instead of black */
+.live-icon-btn svg{
+  width:18px;
+  height:18px;
+  fill:#fff;
+  stroke:#fff;
+}
+
+
+
+/* like button two states */
+#liveLikeBtn{
+  position:relative;
+}
+#liveLikeBtn .heart-outline{
+  display:block;
+}
+#liveLikeBtn .heart-filled{
+  display:none;
+  color:#ff2c55;
+}
+#liveLikeBtn svg{
+  width:18px;
+  height:18px;
+}
+
+#liveLikeBtn.is-liked .heart-filled{
+  display:block;
+}
+
+#liveLikeBtn.is-liked .heart-outline{
+  display:none;
+}
+
+/* floating hearts */
+.live-like-float{
+  position:absolute;
+  right:80px;
+  top:40px;
+  font-size:18px;
+  color:#ff2c55;
+  pointer-events:none;
+  animation:liveHeartUp 1.3s ease-out forwards;
+}
+@keyframes liveHeartUp{
+  from{opacity:.95; transform:translateY(0) scale(1);}
+  to{opacity:0; transform:translateY(-40px) scale(1.5);}
+}
+
+/* Kill any old viewer / like pills from previous header */
+body.live-active .live_video_header,
+body.live-active .live_video_header *,
+body.live-active .live_right,
+body.live-active .live_left,
+body.live-active .live_video_count,
+body.live-active .live_video_likes {
+  display:none !important;
+}
+
+.live-seat-count{
+  background:rgba(34,197,94,.15);
+  border-color:rgba(34,197,94,.6);
+}
+</style>
+
+<div class="live-header">
+  <!-- LEFT -->
+  <div class="live-header-left">
+    <div class="live-host-pill">
+      <img
+        class="live-profile-pic"
+        src="<?php echo iN_HelpSecure($hostAvatar); ?>"
+        alt="<?php echo iN_HelpSecure($hostUsername); ?>"
+      />
+      <div class="live-host-text">
+        <div class="live-username-row">
+          <div class="live-username">
+            <?php echo iN_HelpSecure($hostUsername); ?>
+          </div>
+
+          <?php
+            // Is the current viewer already following the host?
+            $isFollowing = (isset($p_friend_status) && $p_friend_status === 'flwr');
+          ?>
+          <?php if(isset($p_friend_status) && $p_friend_status != 'me'){ ?>
+            <button
+              class="live-follow-btn<?php echo $isFollowing ? ' is-following' : ''; ?>"
+              id="liveFollowBtn"
+              data-state="<?php echo $isFollowing ? 'following' : 'not'; ?>"
+              data-follow="<?php echo iN_HelpSecure($liveCreator); ?>"
+              data-follow-label="<?php echo $followLabel; ?>"
+              data-following-label="<?php echo $followingLabel; ?>"
+            >
+              <?php echo $isFollowing ? $followingLabel : $followLabel; ?>
+            </button>
+          <?php } ?>
+        </div>
+
+        <div class="live-heart-row">
+          <span class="icon">💗</span>
+          <span id="liveHeartCount"
+                data-raw="<?php echo (int)$hostHearts; ?>">
+            <?php echo iN_HelpSecure($hostHeartsText); ?>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="live-meta-row">
+      <div class="live-timer-chip">
+        <span>⏱</span>
+        <span id="liveTimer"
+              data-start="<?php echo $liveStartTs; ?>">
+          00:00
+        </span>
+      </div>
+      <div class="live-live-chip">
+        LIVE
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT -->
+    <!-- RIGHT -->
+  <div class="live-header-right">
+    <!-- MIC / CAM exist for everyone (we hide with CSS for normal viewers) -->
+    <button class="live-icon-btn" id="liveToggleMic" title="Mute / unmute mic">
+      <span class="mic-on">
+        <svg viewBox="0 0 24 24"><path d="M12 15a3 3 0 0 0 3-3V7a3 3 0 0 0-6 0v5a3 3 0 0 0 3 3Zm5-3a1 1 0 0 0-2 0 5 5 0 0 1-10 0 1 1 0 0 0-2 0 7 7 0 0 0 6 6.92V21H7a1 1 0 0 0 0 2h10a1 1 0 1 0 0-2h-4v-2.08A7 7 0 0 0 17 12Z"/></svg>
+      </span>
+      <span class="mic-off">
+        <svg viewBox="0 0 24 24"><path d="m3.71 3.29 17 17a1 1 0 0 1-1.42 1.42l-3.2-3.19A6.88 6.88 0 0 1 12 19a7 7 0 0 1-7-7 1 1 0 0 1 2 0 5 5 0 0 0 7.59 4.15L9 12.56V7a3 3 0 0 1 .44-1.57L3.71 4.71a1 1 0 0 1 0-1.42ZM17 11a1 1 0 0 1-2 0V9.41l2-2Z"/></svg>
+      </span>
+    </button>
+
+    <button class="live-icon-btn" id="liveToggleCam" title="Turn camera on/off">
+      <span class="cam-on">
+        <svg viewBox="0 0 24 24"><path d="M4 5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-2.59l2.3 2.3A1 1 0 0 0 21 18V8a1 1 0 0 0-1.7-.7L17 9.59V7a2 2 0 0 0-2-2Z"/></svg>
+      </span>
+      <span class="cam-off">
+        <svg viewBox="0 0 24 24"><path d="m3.71 3.29 17 17a1 1 0 0 1-1.42 1.42l-2.2-2.2A2 2 0 0 1 15 20H4a2 2 0 0 1-2-2V8a2 2 0 0 1 1-1.73l-1.3-1.3a1 1 0 0 1 1.41-1.41ZM22 9.27v7.46a1 1 0 0 1-1.7.7L18 16.12V10l2.3-2.3A1 1 0 0 1 22 9.27Z"/></svg>
+      </span>
+    </button>
+
+    <?php if (!empty($isHost)) { ?>
+      <!-- Seats (host + cohosts) -->
+      <div class="live-viewer-count live-seat-count">
+        <span class="icon">🎭</span>
+        <span id="seatCount">1</span>
+      </div>
+
+      <!-- Hidden native end-live trigger so old JS still works -->
+      <button
+        class="end-stream-btn"
+        id="<?php echo iN_HelpSecure($theLiveID ?? $liveID); ?>"
+        style="display:none">
+      </button>
+    <?php } ?>
+
+    <!-- LIKE (everyone) -->
+       <!-- LIKE (everyone) -->
+    <button class="live-icon-btn" id="liveLikeBtn" title="Like">
+      <svg class="heart-outline" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 21s-5.4-3.2-8.1-6C2 13 2 9.8 4.1 7.7 5.2 6.5 6.8 6 8.3 6c1.2 0 2.4.5 3.3 1.5.9-1 2.1-1.5 3.3-1.5 1.5 0 3.1.5 4.2 1.7C22 9.8 22 13 20.1 15c-2.7 2.8-8.1 6-8.1 6z"
+              fill="none" stroke="currentColor" stroke-width="1.7"/>
+      </svg>
+      <svg class="heart-filled" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 21s-5.4-3.2-8.1-6C2 13 2 9.8 4.1 7.7 5.2 6.5 6.8 6 8.3 6c1.2 0 2.4.5 3.3 1.5.9-1 2.1-1.5 3.3-1.5 1.5 0 3.1.5 4.2 1.7C22 9.8 22 13 20.1 15c-2.7 2.8-8.1 6-8.1 6z"
+              fill="currentColor"/>
+      </svg>
+    </button>
+
+
+    <!-- CLOSE (everyone) -->
+    <button class="live-icon-btn" id="liveCloseBtn" title="Close">✕</button>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  // ---- Timer ----
+  var timerEl = document.getElementById('liveTimer');
+  if (timerEl) {
+    var start = parseInt(timerEl.getAttribute('data-start') || '0', 10);
+    if (!start) {
+      start = Math.floor(Date.now()/1000);
+    }
+    function tick(){
+      var now  = Math.floor(Date.now()/1000);
+      var diff = Math.max(0, now - start);
+      var m = Math.floor(diff/60);
+      var s = diff % 60;
+      timerEl.textContent =
+        (m < 10 ? '0'+m : m) + ':' + (s < 10 ? '0'+s : s);
+    }
+    tick();
+    setInterval(tick, 1000);
+  }
+
+  // ---- Follow toggle (REAL: uses freeFollow in request.php) ----
+  var followBtn = document.getElementById('liveFollowBtn');
+  if (followBtn) {
+    var followLabel    = followBtn.getAttribute('data-follow-label')    || '+ Follow';
+    var followingLabel = followBtn.getAttribute('data-following-label') || '✓ Following';
+
+    followBtn.addEventListener('click', function () {
+      if (!window.siteurl) {
+        console.warn('siteurl missing');
+        return;
+      }
+
+      var current  = followBtn.getAttribute('data-state') || 'not';   // 'not' | 'following'
+      var followID = followBtn.getAttribute('data-follow');           // host user id
+      var nextType = (current === 'following') ? 'uflw' : 'flw';      // matches freeFollow logic
+
+      followBtn.disabled = true;
+
+      jQuery.post(
+        window.siteurl + 'requests/request.php',
+        {
+          f: 'freeFollow',
+          type: nextType,
+          follow: followID
+        },
+        function (resp) {
+          try {
+            if (typeof resp === 'string') {
+              resp = resp.replace(/^(\s*<br\s*\/?>)+/i, '');
+              resp = JSON.parse(resp);
+            }
+          } catch (e) {
+            console.log('follow JSON parse failed', e, resp);
+          }
+
+          var nowFollowing = (current !== 'following');
+          followBtn.classList.toggle('is-following', nowFollowing);
+          followBtn.textContent = nowFollowing ? followingLabel : followLabel;
+          followBtn.setAttribute('data-state', nowFollowing ? 'following' : 'not');
+        }
+      ).always(function () {
+        followBtn.disabled = false;
+      });
+    });
+  }
+
+  // ---- Like button + floating hearts ----
+  var likeBtn      = document.getElementById('liveLikeBtn');
+  var likeCountEl  = document.getElementById('liveHeartCount');
+  var rawLikes     = likeCountEl ? parseInt(likeCountEl.dataset.raw || '0',10) || 0 : 0;
+
+  function fmtLikes(n){
+    if (n <= 0) return '';
+    if (n >= 1000000) return (n/1000000).toFixed(1).replace(/\.0$/,'') + 'M';
+    if (n >= 1000)    return (n/1000).toFixed(1).replace(/\.0$/,'') + 'K';
+    return String(n);
+  }
+
+  function spawnHeart(){
+    var header = document.querySelector('.live-header');
+    if (!header) return;
+    var h = document.createElement('div');
+    h.className = 'live-like-float';
+    h.innerHTML = '❤';
+    header.appendChild(h);
+    setTimeout(function(){ h.remove(); }, 1400);
+  }
+
+  function pollLiveLikes(){
+    if (!window.siteurl || !window.theLiveID || !likeCountEl) return;
+
+    jQuery.post(
+      window.siteurl + 'requests/request.php',
+      {
+        f: 'live_like_count',
+        id: window.theLiveID
+      },
+      function(resp){
+        if (!resp) return;
+
+        try {
+          if (typeof resp === 'string') {
+            resp = resp.replace(/^(\s*<br\s*\/?>)+/i, '');
+            resp = JSON.parse(resp);
+          }
+        } catch(e){
+          console.log('live_like_count parse failed', e, resp);
+        }
+
+        if (resp && typeof resp.count !== 'undefined') {
+          rawLikes = parseInt(resp.count, 10) || 0;
+          likeCountEl.dataset.raw = rawLikes;
+          likeCountEl.textContent = fmtLikes(rawLikes);
+        }
+      }
+    );
+  }
+
+  setInterval(pollLiveLikes, 5000);
+
+  if (likeBtn && likeCountEl){
+    likeBtn.addEventListener('click', function(){
+      jQuery.post(
+        window.siteurl + 'requests/request.php',
+        {
+          f: 'live_like',
+          id: window.theLiveID
+        },
+        function(resp){
+          try {
+            if (typeof resp === 'string') {
+              resp = resp.replace(/^(\s*<br\s*\/?>)+/i, '');
+              resp = JSON.parse(resp);
+            }
+          } catch(e){
+            console.log('live_like parse failed', e, resp);
+          }
+
+          if (resp && typeof resp.count !== 'undefined') {
+            rawLikes = parseInt(resp.count, 10) || 0;
+          } else {
+            var isLikedNow = !likeBtn.classList.contains('is-liked');
+            rawLikes = Math.max(0, rawLikes + (isLikedNow ? 1 : -1));
+          }
+
+          likeCountEl.dataset.raw = rawLikes;
+          likeCountEl.textContent = fmtLikes(rawLikes);
+
+          var likedNow = !likeBtn.classList.contains('is-liked');
+          likeBtn.classList.toggle('is-liked', likedNow);
+
+          if (likedNow) {
+            spawnHeart();
+          }
+        }
+      );
+    });
+  }
+
+  // ---- Mic / Camera toggles (host + co-host viewers) ----
+  var micBtn = document.getElementById('liveToggleMic');
+  var camBtn = document.getElementById('liveToggleCam');
+
+  function getTracks(){
+    // Expect liveStreamingFullHandler.js to expose this:
+    var tracks = window.localTracks || window.tracks || window.agoraLocalTracks || {};
+    return {
+      mic: tracks.audioTrack || tracks.localAudioTrack || tracks.microphoneTrack || tracks.mic || null,
+      cam: tracks.videoTrack || tracks.localVideoTrack || tracks.cameraTrack || tracks.cam || null
+    };
+  }
+
+  if (micBtn){
+    micBtn.addEventListener('click', function(e){
+      e.preventDefault();
+      var t = getTracks();
+      if (!t.mic || typeof t.mic.setEnabled !== 'function'){
+        console.log('[LIVE] No audioTrack for this user yet');
+        return;
+      }
+      var muted = micBtn.classList.toggle('muted');
+      t.mic.setEnabled(!muted);
+    });
+  }
+
+  if (camBtn){
+    camBtn.addEventListener('click', function(e){
+      e.preventDefault();
+      var t = getTracks();
+      if (!t.cam || typeof t.cam.setEnabled !== 'function'){
+        console.log('[LIVE] No videoTrack for this user yet');
+        return;
+      }
+      var off = camBtn.classList.toggle('off');
+      t.cam.setEnabled(!off);
+    });
+  }
+
+  // ---- Close live: HOST vs VIEWER behaviours ----
+    var closeBtn = document.getElementById('liveCloseBtn');
+  if (closeBtn){
+    closeBtn.addEventListener('click', function(){
+      var isHost = !!window.liveIsHost;
+
+      if (isHost){
+        // HOST: re-use the old finishLiveStreaming flow directly
+        if (window.siteurl && window.theLiveID && window.jQuery) {
+          jQuery.post(
+            window.siteurl + "requests/request.php",
+            { f: "finishLiveStreaming", id: window.theLiveID },
+            function (resp) {
+              if (resp && resp !== "404") {
+                jQuery("body").append(resp);
+                setTimeout(function(){
+                  jQuery(".i_modal_bg_in").addClass("i_modal_display_in");
+                }, 200);
+              }
+            }
+          );
+        } else {
+          // Fallback if jQuery/siteurl missing
+          var hostEndBtn = document.querySelector(
+            ".end-stream-btn, .live_end_button, #end_live_stream, #leave"
+          );
+          if (hostEndBtn){ hostEndBtn.click(); return; }
+          if (confirm("End this live for everyone?")) {
+            window.location.href = window.siteurl || "/";
+          }
+        }
+      } else {
+        // VIEWER / CO-HOST: just leave the live
+        if (confirm("Quitter le live ?")) {
+          var leaveBtn = document.querySelector("#leave, .btn_leave_live, .viewer-quit-btn");
+          if (leaveBtn){
+            leaveBtn.click();
+          } else {
+            window.location.href = window.siteurl || "/";
+          }
+        }
+      }
+    });
+  }
+
+
+  window.closeLive = window.closeLive || function () {
+    closeBtn && closeBtn.click();
+  };
+})();
+</script>
+
+
+cohost is
+/* cohost-ui.js - SEAMLESS BADGE + NO CO-HOST LABEL */
+
+(function () {
+  'use strict';
+
+  const DEBUG = true;
+  function log(...args) {
+    if (DEBUG) console.log('[CO-HOST]', ...args);
+  }
+
+  const channel = (window.liveChannel || '').toString();
+  const me      = (window.liveUserID || '').toString();
+  const host    = (window.liveCreator || '').toString();
+  const isHost  = (me === host);
+
+  if (!channel || !me) {
+    log('Missing channel or user ID');
+    return;
+  }
+
+  log('Init:', { channel, me, host, isHost });
+
+  async function api(action, extra) {
+    try {
+      const params = new URLSearchParams(
+        Object.assign({ action, channel }, extra || {})
+      );
+      const res  = await fetch(
+        '/requests/live_seat_api.php?' + params.toString(),
+        { credentials: 'same-origin' }
+      );
+      const data = await res.json();
+      log('API Response:', action, data);
+      return data;
+    } catch (e) {
+      log('API Error:', action, e);
+      return { ok: false, error: e.message };
+    }
+  }
+
+  const ui = document.getElementById('opSeatUI');
+  if (!ui) {
+    log('UI not found');
+    return;
+  }
+  ui.style.display = 'block';
+
+  const FALLBACK_AVATAR =
+    (window.siteurl || '/') +
+    'content/themes/default/images/default_avatar.jpg';
+
+  /* ============================================================
+   * HOST SIDE
+   * ============================================================ */
+  if (isHost) {
+    const hostView = document.getElementById('opHostView');
+    const toggleBtn = document.getElementById('opTogglePanel');
+    const panel     = document.getElementById('opPanel');
+    const closeBtn  = document.getElementById('opClosePanel');
+    const badge     = document.getElementById('opBadge');
+    const list      = document.getElementById('opRequestsList');
+    const tabs      = document.querySelectorAll('.op-tab');
+
+    if (!hostView || !toggleBtn || !panel || !closeBtn || !list) {
+      log('Missing host UI pieces');
+      return;
+    }
+
+    hostView.style.display = 'block';
+
+    let currentTab   = 'pending';
+    let allRequests  = [];
+    let panelRefreshTimer = null;
+    let badgeRefreshTimer = null; // NEW: separate timer for badge
+
+    // Push approved co-hosts into global seat meta (NO CO-HOST LABEL)
+    function syncSeatMeta() {
+      window.liveSeatMeta = window.liveSeatMeta || {};
+      const meta = window.liveSeatMeta;
+
+      // Clear old entries created from this API
+      Object.keys(meta).forEach(function (k) {
+        if (meta[k] && meta[k].fromSeatAPI) {
+          delete meta[k];
+        }
+      });
+
+      // Add approved co-hosts (NO roleLabel - tiles will show as "Guest")
+      (allRequests || []).forEach(function (r) {
+        if (r.status !== 'approved') return;
+        const uid = String(r.uid || '');
+        if (!uid) return;
+
+        const isFollowing =
+          !!(r.is_following ||
+             r.friend_status === 'flwr' ||
+             r.isFollowing);
+
+        meta[uid] = {
+          id: uid,
+          username: r.username || '',
+          fullname: r.fullname || '',
+          avatar: r.avatar || '',
+          // NO roleLabel here - default "Guest" will be used
+          isFollowing: isFollowing,
+          fromSeatAPI: true
+        };
+      });
+
+      // Add HOST meta
+      if (host) {
+        const hid = String(host);
+        if (!meta[hid]) {
+          meta[hid] = {
+            id: hid,
+            username: window.liveCreatorUserName || '',
+            fullname: window.liveCreatorUserName || '',
+            avatar: window.liveCreatorAvatar || '',
+            roleLabel: 'Host',
+            isFollowing: true,
+            fromSeatAPI: true
+          };
+        }
+      }
+    }
+
+    toggleBtn.addEventListener('click', () => {
+      const isOpen = panel.classList.contains('open');
+      if (isOpen) {
+        panel.classList.remove('open');
+        stopPanelRefresh();
+      } else {
+        panel.classList.add('open');
+        loadRequests();
+        startPanelRefresh();
+      }
+    });
+
+    closeBtn.addEventListener('click', () => {
+      panel.classList.remove('open');
+      stopPanelRefresh();
+    });
+
+    tabs.forEach((tab) => {
+      tab.addEventListener('click', () => {
+        tabs.forEach((t) => t.classList.remove('active'));
+        tab.classList.add('active');
+        currentTab = tab.getAttribute('data-tab');
+        renderList();
+      });
+    });
+
+    async function loadRequests() {
+      const res = await api('list', { host_uid: host });
+
+      if (!res || !res.ok) {
+        if (panel.classList.contains('open')) {
+          list.innerHTML = '<div class="op-empty">❌ Failed to load</div>';
+        }
+        return;
+      }
+
+      allRequests = res.all || [];
+      log('Loaded requests:', allRequests);
+
+      syncSeatMeta();
+      updateBadge();
+      
+      if (panel.classList.contains('open')) {
+        renderList();
+      }
+    }
+
+    function updateBadge() {
+      const pendingCount  = allRequests.filter(
+        (r) => r.status === 'pending'
+      ).length;
+      const approvedCount = allRequests.filter(
+        (r) => r.status === 'approved'
+      ).length;
+      const declinedCount = allRequests.filter(
+        (r) => r.status === 'rejected'
+      ).length;
+
+      if (pendingCount > 0) {
+        badge.textContent   = pendingCount;
+        badge.style.display = 'flex';
+      } else {
+        badge.style.display = 'none';
+      }
+
+      const pc = document.getElementById('opPendingCount');
+      const ac = document.getElementById('opApprovedCount');
+      const dc = document.getElementById('opDeclinedCount');
+
+      if (pc) pc.textContent = pendingCount ? `(${pendingCount})` : '';
+      if (ac) ac.textContent = approvedCount ? `(${approvedCount})` : '';
+      if (dc) dc.textContent = declinedCount ? `(${declinedCount})` : '';
+    }
+
+    function renderList() {
+      let filtered = [];
+      if (currentTab === 'pending') {
+        filtered = allRequests.filter((r) => r.status === 'pending');
+      } else if (currentTab === 'approved') {
+        filtered = allRequests.filter((r) => r.status === 'approved');
+      } else if (currentTab === 'declined') {
+        filtered = allRequests.filter((r) => r.status === 'rejected');
+      }
+
+      if (filtered.length === 0) {
+        let emptyMsg = 'No requests yet';
+        if (currentTab === 'approved') emptyMsg = 'No approved co-hosts';
+        if (currentTab === 'declined') emptyMsg = 'No declined requests';
+        list.innerHTML = `<div class="op-empty">📭 ${emptyMsg}</div>`;
+        return;
+      }
+
+      list.innerHTML = filtered
+        .map((req) => {
+          const uid      = req.uid;
+          const name     = req.fullname || req.username || `User ${uid}`;
+          const username = req.username ? `@${req.username}` : '';
+          const avatar   = req.avatar || FALLBACK_AVATAR;
+
+          let buttons = '';
+          if (req.status === 'pending') {
+            buttons = `
+              <button class="op-btn op-btn-approve" data-uid="${uid}">✓ Approve</button>
+              <button class="op-btn op-btn-decline" data-uid="${uid}">✕ Decline</button>
+            `;
+          } else if (req.status === 'approved') {
+            buttons = `
+              <button class="op-btn op-btn-remove" data-uid="${uid}">⟲ Remove</button>
+              <button class="op-btn op-btn-decline" data-uid="${uid}">✕ Decline</button>
+            `;
+          } else if (req.status === 'rejected') {
+            buttons = `
+              <button class="op-btn op-btn-approve" data-uid="${uid}">✓ Approve</button>
+            `;
+          }
+
+          return `
+            <div class="op-item">
+              <img class="op-avatar" src="${avatar}"
+                   onerror="this.src='${FALLBACK_AVATAR}'"
+                   alt="${name}">
+              <div class="op-info">
+                <div class="op-name">
+                  <a href="${window.siteurl}${req.username || uid}" target="_blank">${name}</a>
+                </div>
+                ${
+                  username
+                    ? `<div class="op-username"><a href="${window.siteurl}${req.username}" target="_blank">${username}</a></div>`
+                    : ''
+                }
+              </div>
+              <div class="op-actions">
+                ${buttons}
+              </div>
+            </div>
+          `;
+        })
+        .join('');
+
+      attachButtonListeners();
+    }
+
+    function attachButtonListeners() {
+      // APPROVE
+      list.querySelectorAll('.op-btn-approve').forEach((btn) => {
+        btn.addEventListener('click', async () => {
+          const uid = btn.getAttribute('data-uid');
+          log('Approving:', uid);
+
+          btn.disabled   = true;
+          btn.textContent = '...';
+
+          const res = await api('approve', { target_uid: uid });
+
+          if (res && res.ok) {
+            const req = allRequests.find((r) => r.uid === uid);
+            if (req) req.status = 'approved';
+            updateBadge();
+            renderList();
+            log('✅ Approved:', uid);
+          } else {
+            alert('Failed to approve');
+            btn.disabled   = false;
+            btn.textContent = '✓ Approve';
+          }
+        });
+      });
+
+      // DECLINE
+      list.querySelectorAll('.op-btn-decline').forEach((btn) => {
+        btn.addEventListener('click', async () => {
+          const uid = btn.getAttribute('data-uid');
+          log('Declining:', uid);
+
+          btn.disabled   = true;
+          btn.textContent = '...';
+
+          const res = await api('reject', { target_uid: uid });
+
+          if (res && res.ok) {
+            const req = allRequests.find((r) => r.uid === uid);
+            if (req) req.status = 'rejected';
+            updateBadge();
+            renderList();
+            log('✅ Declined:', uid);
+          } else {
+            alert('Failed to decline');
+            btn.disabled   = false;
+            btn.textContent = '✕ Decline';
+          }
+        });
+      });
+
+      // REMOVE (kick out cohost)
+      list.querySelectorAll('.op-btn-remove').forEach((btn) => {
+        btn.addEventListener('click', async () => {
+          const uid = btn.getAttribute('data-uid');
+          if (!confirm('Remove this co-host from the stream?')) return;
+
+          log('Removing co-host:', uid);
+
+          btn.disabled   = true;
+          btn.textContent = '...';
+
+          const res = await api('remove', { target_uid: uid });
+
+          if (res && res.ok) {
+            const req = allRequests.find((r) => r.uid === uid);
+            if (req) req.status = 'rejected';
+            updateBadge();
+            renderList();
+            log('✅ Removed:', uid);
+          } else {
+            alert('Failed to remove co-host');
+            btn.disabled   = false;
+            btn.textContent = '⟲ Remove';
+          }
+        });
+      });
+    }
+
+    // Panel refresh (only when open)
+    function startPanelRefresh() {
+      if (panelRefreshTimer) return;
+      panelRefreshTimer = setInterval(() => loadRequests(), 3000);
+      log('Panel auto-refresh started');
+    }
+
+    function stopPanelRefresh() {
+      if (panelRefreshTimer) {
+        clearInterval(panelRefreshTimer);
+        panelRefreshTimer = null;
+        log('Panel auto-refresh stopped');
+      }
+    }
+
+    // Badge refresh (always running in background)
+    function startBadgeRefresh() {
+      if (badgeRefreshTimer) return;
+      badgeRefreshTimer = setInterval(() => {
+        // Only update badge, don't render list unless panel is open
+        loadRequests();
+      }, 2000); // Check every 2 seconds
+      log('Badge background refresh started');
+    }
+
+    // Initial load + start background badge polling
+    loadRequests();
+    startBadgeRefresh();
+    
+    return; // host done
+  }
+
+  /* ============================================================
+   * VIEWER SIDE
+   * ============================================================ */
+
+  const viewerView = document.getElementById('opViewerView');
+  const sendBtn    = document.getElementById('opSendRequest');
+  const statusDiv  = document.getElementById('opViewerStatus');
+
+  if (!viewerView || !sendBtn || !statusDiv) {
+    log('Viewer UI missing');
+    return;
+  }
+
+  viewerView.style.display = 'block';
+
+  let pollTimer    = null;
+  let seatTimer    = null;
+  let currentState = null;
+
+  function renderStatus(state) {
+    currentState = state;
+
+    if (!state) {
+      statusDiv.innerHTML   = '';
+      sendBtn.style.display = 'flex';
+      sendBtn.disabled      = false;
+      sendBtn.innerHTML     = '<span>🎭</span><span>Request co-host</span>';
+      return;
+    }
+
+    if (state === 'pending') {
+      sendBtn.style.display = 'none';
+      statusDiv.innerHTML =
+        '<div class="op-status-chip pending">' +
+        '<span class="op-spinner"></span>' +
+        '<span>Request sent – waiting for host</span>' +
+        '<button id="opCancelRequest" style="margin-left:8px;border:0;background:transparent;color:#bfdbfe;cursor:pointer;font-size:11px;">Cancel</button>' +
+        '</div>';
+
+      const cancelBtn = document.getElementById('opCancelRequest');
+      if (cancelBtn) {
+        cancelBtn.addEventListener('click', async (e) => {
+          e.preventDefault();
+          await api('reject', { target_uid: me });
+          stopPolling();
+          renderStatus(null);
+        });
+      }
+    } else if (state === 'approved') {
+      sendBtn.style.display = 'none';
+      statusDiv.innerHTML =
+        '<div class="op-status-chip approved">' +
+        '<span>✓</span>' +
+        '<span>Approved! Connecting…</span>' +
+        '</div>';
+    } else if (state === 'rejected') {
+      sendBtn.style.display = 'none';
+      statusDiv.innerHTML =
+        '<div class="op-status-chip rejected">' +
+        '<span>✕</span>' +
+        '<span>Request declined</span>' +
+        '</div>';
+
+      setTimeout(() => {
+        renderStatus(null);
+      }, 4000);
+    }
+  }
+
+  sendBtn.addEventListener('click', async (e) => {
+    e.preventDefault();
+    if (currentState === 'pending') return;
+
+    sendBtn.disabled  = true;
+    sendBtn.innerHTML = '<span>🎭</span><span>Sending...</span>';
+
+    const res = await api('request', { requester_uid: me });
+
+    if (res && res.ok) {
+      renderStatus('pending');
+      startPolling();
+    } else if (res && res.duplicate) {
+      renderStatus('pending');
+      startPolling();
+    } else {
+      alert('Failed to send request');
+      renderStatus(null);
+    }
+  });
+
+  async function pollStatus() {
+    const res = await api('poll', { requester_uid: me });
+    if (!res || !res.ok) return;
+
+    if (res.rejected) {
+      stopPolling();
+      renderStatus('rejected');
+      return;
+    }
+
+    if (res.approved && currentState !== 'approved') {
+      renderStatus('approved');
+      stopPolling();
+      await startCoHosting();
+    }
+  }
+
+  function startPolling() {
+    if (pollTimer) return;
+    pollTimer = setInterval(pollStatus, 2500);
+    log('Started polling for approval');
+  }
+
+  function stopPolling() {
+    if (pollTimer) {
+      clearInterval(pollTimer);
+      pollTimer = null;
+      log('Stopped polling');
+    }
+  }
+
+  async function startCoHosting() {
+    try {
+      log('Starting co-hosting…');
+
+      const rtc = window.rtcClient || window.client;
+      if (!rtc) throw new Error('No RTC client');
+
+      await rtc.setClientRole('host');
+      window.IS_COHOST = true;
+      document.body.classList.add('cohost-active');
+
+      const mic = await AgoraRTC.createMicrophoneAudioTrack();
+      const cam = await AgoraRTC.createCameraVideoTrack();
+
+      window.localTracks = window.localTracks || {};
+      window.localTracks.audioTrack = mic;
+      window.localTracks.videoTrack = cam;
+
+      let remoteWrap = document.getElementById('remote-playerlist');
+      if (!remoteWrap) {
+        remoteWrap = document.createElement('div');
+        remoteWrap.id = 'remote-playerlist';
+        document.getElementById('liveStage')?.appendChild(remoteWrap);
+      }
+
+      const myTile = document.createElement('div');
+      myTile.id = 'my-cohost-preview';
+      myTile.className = 'op-tile';
+      myTile.setAttribute('data-uid', 'self');
+      remoteWrap.appendChild(myTile);
+
+      cam.play(myTile, { fit: 'cover' });
+
+      if (!window.remoteUsers) window.remoteUsers = {};
+      window.remoteUsers['self-cohost'] = {
+        uid: 'self',
+        videoTrack: cam,
+        audioTrack: mic,
+      };
+
+      await rtc.publish([mic, cam]);
+
+      setTimeout(() => {
+        if (typeof window.updateLiveLayout === 'function') {
+          window.updateLiveLayout();
+        }
+      }, 300);
+
+      startSeatMonitor();
+      log('✅ Co-hosting started!');
+    } catch (e) {
+      log('❌ Co-hosting failed:', e);
+      statusDiv.innerHTML =
+        '<div class="op-status-chip rejected">' +
+        '<span>✕</span>' +
+        `<span>Failed: ${e.message}</span>` +
+        '</div>';
+    }
+  }
+
+  async function stopCoHosting() {
+    log('Stopping co-hosting…');
+
+    const rtc = window.rtcClient || window.client;
+    if (!rtc) return;
+
+    try {
+      if (window.localTracks) {
+        const tracks = [];
+        if (window.localTracks.audioTrack) tracks.push(window.localTracks.audioTrack);
+        if (window.localTracks.videoTrack) tracks.push(window.localTracks.videoTrack);
+
+        try {
+          if (tracks.length) await rtc.unpublish(tracks);
+        } catch (e) {
+          log('unpublish error', e);
+        }
+
+        if (window.localTracks.audioTrack) {
+          window.localTracks.audioTrack.stop();
+          window.localTracks.audioTrack.close();
+          window.localTracks.audioTrack = null;
+        }
+        if (window.localTracks.videoTrack) {
+          window.localTracks.videoTrack.stop();
+          window.localTracks.videoTrack.close();
+          window.localTracks.videoTrack = null;
+        }
+      }
+
+      const tile = document.getElementById('my-cohost-preview');
+      if (tile && tile.parentNode) tile.parentNode.removeChild(tile);
+
+      if (window.remoteUsers && window.remoteUsers['self-cohost']) {
+        delete window.remoteUsers['self-cohost'];
+      }
+
+      try {
+        await rtc.setClientRole('audience');
+      } catch (e) {
+        log('setClientRole back to audience failed', e);
+      }
+
+      window.IS_COHOST = false;
+      document.body.classList.remove('cohost-active');
+
+      if (typeof window.updateLiveLayout === 'function') {
+        window.updateLiveLayout();
+      }
+    } catch (e) {
+      log('stopCoHosting error', e);
+    }
+  }
+
+  function startSeatMonitor() {
+    if (seatTimer) return;
+    seatTimer = setInterval(async () => {
+      const res = await api('poll', { requester_uid: me });
+      if (!res || !res.ok) return;
+
+      if (!res.approved && res.rejected) {
+        log('Host removed this co-host – shutting down…');
+        stopSeatMonitor();
+        await stopCoHosting();
+        renderStatus('rejected');
+      }
+    }, 3000);
+    log('Started seat monitor');
+  }
+
+  function stopSeatMonitor() {
+    if (seatTimer) {
+      clearInterval(seatTimer);
+      seatTimer = null;
+      log('Stopped seat monitor');
+    }
+  }
+
+  log('✅ Co-host UI initialized (viewer)');
+})();
+
+
+liveseatapi is
+<?php
+/* live_seat_api.php - FINAL WORKING with proper remove + AVATAR */
+
+error_reporting(0);
+ini_set('display_errors', 0);
+
+$base = dirname(__FILE__);
+$incPath = $base . '/../includes/inc.php';
+
+if (file_exists($incPath)) {
+    require_once($incPath);
+}
+
+global $db, $base_url;
+
+if (!isset($db) || !$db) {
+    $connectPath = $base . '/../connect.php';
+    if (file_exists($connectPath)) {
+        require_once($connectPath);
+        global $db;
+    }
+}
+
+if (session_status() === PHP_SESSION_NONE) {
+    @session_start();
+}
+
+header('Content-Type: application/json');
+
+$logDir   = $base . '/logs';
+$dataFile = $logDir . '/live_seats.json';
+
+if (!is_dir($logDir)) {
+    @mkdir($logDir, 0777, true);
+}
+
+if (!file_exists($dataFile)) {
+    @file_put_contents($dataFile, json_encode(["channels" => []]));
+}
+
+function readState($file) {
+    $raw  = @file_get_contents($file);
+    $json = @json_decode($raw, true);
+    if (!is_array($json) || !isset($json['channels'])) {
+        $json = ["channels" => []];
+    }
+    return $json;
+}
+
+function writeState($file, $state) {
+    return @file_put_contents($file, json_encode($state, JSON_PRETTY_PRINT));
+}
+
+$action  = $_REQUEST['action'] ?? '';
+$channel = trim($_REQUEST['channel'] ?? '');
+
+if ($channel === '') {
+    echo json_encode(["ok" => false, "error" => "channel required"]);
+    exit;
+}
+
+$state = readState($dataFile);
+if (!isset($state['channels'][$channel])) {
+    $state['channels'][$channel] = [
+        "requests" => [],
+        "grants"   => [],
+        "host_uid" => null,
+    ];
+}
+$ch = &$state['channels'][$channel];
+
+switch ($action) {
+        /* ---- viewer sends request ---- */
+    case 'request':
+        global $db, $iN, $base_url;
+
+        $uid = trim($_REQUEST['requester_uid'] ?? '');
+        if ($uid === '') {
+            echo json_encode(["ok" => false, "error" => "requester_uid required"]);
+            exit;
+        }
+
+        // --- Build username, fullname, avatar from DB + the same helper Mesfollow uses ---
+        $username = '';
+        $fullname = '';
+        $avatar   = '';
+
+        if (isset($db) && ($db instanceof mysqli)) {
+            $safeUid = mysqli_real_escape_string($db, $uid);
+            $q = "SELECT i_username, i_user_fullname
+                  FROM i_users
+                  WHERE iuid = '$safeUid'
+                  LIMIT 1";
+
+            if ($res = @mysqli_query($db, $q)) {
+                if (mysqli_num_rows($res) > 0) {
+                    $row      = mysqli_fetch_assoc($res);
+                    $username = trim($row['i_username'] ?? '');
+                    $fullname = trim($row['i_user_fullname'] ?? '');
+                }
+            }
+        }
+
+        if ($username === '') { $username = 'user_' . $uid; }
+        if ($fullname === '') { $fullname = 'User ' . $uid; }
+
+        // Use the SAME avatar helper the rest of the site uses
+        if (isset($iN) && method_exists($iN, 'iN_UserAvatar')) {
+            $avatar = $iN->iN_UserAvatar($uid, $base_url);
+        }
+        if (!$avatar) {
+            $avatar = rtrim($base_url, '/') .
+                      '/content/themes/default/images/default_avatar.jpg';
+        }
+
+        // --- SINGLE ROW PER USER: if he requested before, just update that row ---
+        $updated = false;
+        foreach ($ch['requests'] as &$r) {
+            if ($r['uid'] === $uid) {
+                $r['username'] = $username;
+                $r['fullname'] = $fullname;
+                $r['avatar']   = $avatar;
+                $r['status']   = 'pending';
+                $r['at']       = time();
+                $updated       = true;
+                break;
+            }
+        }
+        unset($r);
+
+        if (!$updated) {
+            $ch['requests'][] = [
+                "uid"      => $uid,
+                "username" => $username,
+                "fullname" => $fullname,
+                "avatar"   => $avatar,
+                "at"       => time(),
+                "status"   => "pending",
+            ];
+        }
+
+        writeState($dataFile, $state);
+        echo json_encode([
+            "ok"       => true,
+            "username" => $username,
+            "fullname" => $fullname,
+            "avatar"   => $avatar,
+        ]);
+        exit;
+
+    case 'list':
+        $host_uid = trim($_REQUEST['host_uid'] ?? '');
+        if ($host_uid !== '') {
+            $ch['host_uid'] = $host_uid;
+        }
+        writeState($dataFile, $state);
+
+        echo json_encode(["ok" => true, "all" => $ch['requests']]);
+        exit;
+
+    case 'approve':
+        $target = trim($_REQUEST['target_uid'] ?? '');
+        if ($target === '') {
+            echo json_encode(["ok" => false, "error" => "target_uid required"]);
+            exit;
+        }
+
+        $found = false;
+        foreach ($ch['requests'] as &$r) {
+            if ($r['uid'] === $target) {
+                $r['status'] = 'approved';
+                $found       = true;
+                break;
+            }
+        }
+
+        if ($found) {
+            $ch['grants'][] = ["uid" => $target, "at" => time()];
+            writeState($dataFile, $state);
+            echo json_encode(["ok" => true]);
+        } else {
+            echo json_encode(["ok" => false, "error" => "not found"]);
+        }
+        exit;
+
+    case 'reject':
+        $target = trim($_REQUEST['target_uid'] ?? '');
+        if ($target === '') {
+            echo json_encode(["ok" => false, "error" => "target_uid required"]);
+            exit;
+        }
+
+        $found = false;
+        foreach ($ch['requests'] as &$r) {
+            if ($r['uid'] === $target) {
+                $r['status'] = 'rejected';
+                $found       = true;
+                break;
+            }
+        }
+
+        if ($found) {
+            $ch['grants'] = array_values(array_filter($ch['grants'], function ($g) use ($target) {
+                return $g['uid'] !== $target;
+            }));
+
+            writeState($dataFile, $state);
+            echo json_encode(["ok" => true]);
+        } else {
+            echo json_encode(["ok" => false, "error" => "not found"]);
+        }
+        exit;
+
+    case 'remove':  // host kicks out existing cohost
+        $target = trim($_REQUEST['target_uid'] ?? '');
+        if ($target === '') {
+            echo json_encode(["ok" => false, "error" => "target_uid required"]);
+            exit;
+        }
+
+        $found = false;
+        foreach ($ch['requests'] as &$r) {
+            if ($r['uid'] === $target && $r['status'] === 'approved') {
+                $r['status'] = 'rejected';
+                $found       = true;
+                break;
+            }
+        }
+
+        if ($found) {
+            $ch['grants'] = array_values(array_filter($ch['grants'], function ($g) use ($target) {
+                return $g['uid'] !== $target;
+            }));
+
+            writeState($dataFile, $state);
+            echo json_encode(["ok" => true]);
+        } else {
+            echo json_encode(["ok" => false, "error" => "not found"]);
+        }
+        exit;
+
+    case 'poll':
+        $uid = trim($_REQUEST['requester_uid'] ?? '');
+        if ($uid === '') {
+            echo json_encode(["ok" => false, "error" => "requester_uid required"]);
+            exit;
+        }
+
+        $approved = false;
+        $rejected = false;
+
+        foreach ($ch['grants'] as $g) {
+            if ($g['uid'] === $uid) {
+                $approved = true;
+                break;
+            }
+        }
+
+        if (!$approved) {
+            foreach ($ch['requests'] as $r) {
+                if ($r['uid'] === $uid && $r['status'] === 'rejected') {
+                    $rejected = true;
+                    break;
+                }
+            }
+        }
+
+        echo json_encode(["ok" => true, "approved" => $approved, "rejected" => $rejected]);
+        exit;
+
+    case 'clear':
+        $ch['requests'] = [];
+        $ch['grants']   = [];
+        writeState($dataFile, $state);
+        echo json_encode(["ok" => true, "cleared" => true]);
+        exit;
+
+    default:
+        echo json_encode(["ok" => false, "error" => "invalid action"]);
+}
+
+livestreamingfullhandlerjs is
+/* liveStreamingFullHandler.js - PERFECT LAYOUT SWITCHER */
+
+(function ($) {
+  "use strict";
+
+  let client = null;
+  window.rtcClient = null;
+
+  const localTracks = { videoTrack: null, audioTrack: null };
+  window.localTracks = localTracks;
+
+  const remoteUsers = {};
+  window.remoteUsers = remoteUsers;
+
+  const options = {
+    appid: window.liveAppID || null,
+    channel: window.liveChannel || null,
+    uid: (window.liveUserID || null),
+    token: "",
+    role: (String(window.liveUserID) === String(window.liveCreator)) ? "host" : "audience",
+    audienceLatency: 2
+  };
+
+  function debug(msg) {
+    console.log('🎬 [LIVE]', msg);
+  }
+
+  function updateLayout() {
+    const stage = document.getElementById('liveStage');
+    const videoBg = document.getElementById('videoBackground');
+    
+    if (!stage) return;
+
+    let totalParticipants = Object.keys(remoteUsers).length;
+    
+    if (options.role === "host" && localTracks.videoTrack) {
+      totalParticipants += 1;
+    } else if (window.IS_COHOST && localTracks.videoTrack) {
+      totalParticipants += 1;
+    }
+
+    debug(`Layout update: ${totalParticipants} participants`);
+
+    stage.classList.remove('layout-solo', 'layout-duo', 'layout-multi');
+
+    if (totalParticipants === 1) {
+      stage.classList.add('layout-solo');
+      videoBg.classList.remove('blurred-bg');
+      videoBg.style.backgroundImage = '';
+      debug('✅ SOLO layout');
+    } else if (totalParticipants === 2) {
+      stage.classList.add('layout-duo');
+      videoBg.classList.add('blurred-bg');
+      videoBg.style.backgroundImage = `url(${window.liveCreatorAvatar})`;
+      debug('✅ DUO layout');
+    } else {
+      stage.classList.add('layout-multi');
+      videoBg.classList.add('blurred-bg');
+      videoBg.style.backgroundImage = `url(${window.liveCreatorAvatar})`;
+      debug('✅ MULTI layout');
+    }
+
+    updateCounter();
+    updateSeatCount();
+  }
+
+  function updateCounter() {
+    return;
+  }
+
+  function updateSeatCount() {
+    let seats = 0;
+
+    if (options.role === "host" && localTracks.videoTrack) {
+      seats += 1;
+    } else if (window.IS_COHOST && localTracks.videoTrack) {
+      seats += 1;
+    }
+
+    seats += Object.keys(remoteUsers).length;
+
+    if (seats <= 0) {
+      $("#seatCount").text('');
+    } else {
+      $("#seatCount").text(seats);
+    }
+  }
+
+  function ensureRemoteTileAndPlay(user) {
+    if (!user || !user.uid) return;
+
+    const uid = String(user.uid);
+    const id = `user-${uid}`;
+    
+    debug(`ensureRemoteTileAndPlay: ${uid}, hasVideo: ${!!user.videoTrack}`);
+    
+    if (!user.videoTrack) {
+      debug(`Skip ${uid} - no video`);
+      return;
+    }
+
+    if (document.getElementById(id)) {
+      debug(`Skip ${uid} - tile exists`);
+      return;
+    }
+    
+    if (options.role === "audience" && !window.IS_COHOST && Object.keys(remoteUsers).length === 1) {
+      const localPlayer = document.getElementById("local-player");
+      if (localPlayer && !localPlayer.querySelector("video")) {
+        debug(`VIEWER: Playing host ${uid} in #local-player`);
+        try {
+          user.videoTrack.play("local-player", { fit: "cover" });
+          if (user.audioTrack) user.audioTrack.play();
+          updateLayout();
+          return;
+        } catch (e) {
+          debug(`Local player error: ${e.message}`);
+        }
+      }
+    }
+    
+    let remoteWrap = document.getElementById("remote-playerlist");
+    if (!remoteWrap) {
+      remoteWrap = document.createElement("div");
+      remoteWrap.id = "remote-playerlist";
+      document.getElementById('liveStage')?.appendChild(remoteWrap);
+    }
+
+    const tile = document.createElement("div");
+    tile.id = id;
+    tile.className = "op-tile";
+    tile.setAttribute('data-uid', uid);
+    remoteWrap.appendChild(tile);
+    
+    try {
+      user.videoTrack.play(tile, { fit: "cover" });
+      if (user.audioTrack) user.audioTrack.play();
+      debug(`✅ Playing ${uid} in tile`);
+    } catch (e) {
+      debug(`Play error: ${e.message}`);
+      tile.remove();
+      return;
+    }
+
+    addTileMeta(tile, user);
+    updateLayout();
+  }
+
+  function addTileMeta(tile, user){
+    if (!tile) return;
+    const uid = String(user && user.uid ? user.uid : '');
+    if (!uid) return;
+
+    const seatMeta = (window.liveSeatMeta || {})[uid] || {};
+    const displayName = seatMeta.username || seatMeta.fullname || '';
+    if (!displayName) return;
+
+    const followId      = seatMeta.id || seatMeta.userId || uid;
+    const currentUserId = String(window.liveUserID || '');
+    const isMe          = (currentUserId && String(followId) === currentUserId);
+    const isFollowing = !!seatMeta.isFollowing;
+    const label = seatMeta.roleLabel || (uid === String(window.liveCreator) ? 'Host' : 'Guest');
+
+    const metaDiv = document.createElement('div');
+    metaDiv.className = 'tile-meta';
+
+    let html = `
+      <span class="label">${label}</span>
+      <span class="name">${displayName}</span>
+    `;
+
+    if (!isMe){
+      html += `
+        <button class="tile-follow-btn${isFollowing ? ' is-following' : ''}"
+                data-follow="${followId}"
+                data-state="${isFollowing ? 'following' : 'not'}">
+          ${isFollowing ? 'Following' : '+ Follow'}
+        </button>
+      `;
+    }
+
+    metaDiv.innerHTML = html;
+    tile.appendChild(metaDiv);
+  }
+
+  async function join() {
+    try {
+      debug('=== JOIN START ===');
+
+      if (!options.appid || !options.channel) {
+        throw new Error('Missing appid or channel');
+      }
+
+      client = AgoraRTC.createClient({ mode: "live", codec: "vp8" });
+      window.rtcClient = client;
+
+      if (options.role === "audience") {
+        await client.setClientRole("audience", { level: options.audienceLatency });
+      } else {
+        await client.setClientRole("host");
+      }
+
+      if (options.role === "host") {
+        document.body.classList.add('is-host');
+      } else {
+        document.body.classList.remove('is-host');
+      }
+
+      client.on('user-published', async (user, mediaType) => {
+        try {
+          const uid = String(user.uid);
+          debug(`User-published: ${uid}, ${mediaType}`);
+          
+          await client.subscribe(user, mediaType);
+          
+          if (mediaType === "video") {
+            remoteUsers[uid] = user;
+            ensureRemoteTileAndPlay(user);
+          } else if (mediaType === "audio" && user.audioTrack) {
+            user.audioTrack.play();
+          }
+        } catch (e) {
+          debug(`Subscribe error: ${e.message}`);
+        }
+      });
+
+      client.on('user-unpublished', (user, mediaType) => {
+        debug(`Unpublished: ${user.uid}, ${mediaType}`);
+        if (mediaType === "video") {
+          const el = document.getElementById(`user-${user.uid}`);
+          if (el && el.parentNode) el.parentNode.removeChild(el);
+          delete remoteUsers[String(user.uid)];
+          updateLayout();
+        }
+      });
+
+      client.on('user-joined', async (user) => {
+        debug(`User-joined: ${user.uid}`);
+        const uid = String(user.uid);
+        
+        try {
+          if (user.hasVideo && !remoteUsers[uid]) {
+            await client.subscribe(user, "video");
+            remoteUsers[uid] = user;
+            ensureRemoteTileAndPlay(user);
+          }
+          
+          if (user.hasAudio) {
+            await client.subscribe(user, "audio");
+            if (user.audioTrack) user.audioTrack.play();
+          }
+        } catch (e) {
+          debug(`Join subscribe error: ${e.message}`);
+        }
+      });
+
+      client.on('user-left', (user) => {
+        debug(`User-left: ${user.uid}`);
+        const el = document.getElementById(`user-${user.uid}`);
+        if (el && el.parentNode) el.parentNode.removeChild(el);
+        delete remoteUsers[String(user.uid)];
+        updateLayout();
+      });
+
+      options.uid = await client.join(
+        options.appid, 
+        options.channel, 
+        options.token || null, 
+        options.uid || null
+      );
+      debug(`✅ Joined! UID: ${options.uid}`);
+
+      for (const u of client.remoteUsers) {
+        const uid = String(u.uid);
+        if (remoteUsers[uid]) continue;
+        
+        try {
+          if (u.hasVideo) {
+            await client.subscribe(u, "video");
+            remoteUsers[uid] = u;
+          }
+          if (u.hasAudio) {
+            await client.subscribe(u, "audio");
+          }
+          
+          if (u.hasVideo) {
+            ensureRemoteTileAndPlay(u);
+          }
+        } catch (e) {
+          debug(`Initial subscribe error: ${e.message}`);
+        }
+      }
+
+      if (options.role === "host") {
+        debug('Creating host tracks...');
+        
+        try {
+          localTracks.audioTrack = await AgoraRTC.createMicrophoneAudioTrack();
+          localTracks.videoTrack = await AgoraRTC.createCameraVideoTrack();
+          
+          localTracks.videoTrack.play("local-player", { fit: "cover" });
+          await client.publish([localTracks.audioTrack, localTracks.videoTrack]);
+          
+          debug('✅ Host published');
+        } catch (err) {
+          alert('Camera/mic denied. Refresh and allow permissions.');
+          throw err;
+        }
+      }
+
+      updateLayout();
+      debug('=== JOIN COMPLETE ===');
+      
+    } catch (error) {
+      debug(`JOIN ERROR: ${error.message}`);
+      alert('Failed to join: ' + error.message);
+    }
+  }
+
+  async function leave() {
+    debug('Leaving...');
+    
+    for (const k of Object.keys(localTracks)) {
+      const t = localTracks[k];
+      if (t) {
+        t.stop();
+        t.close();
+        localTracks[k] = null;
+      }
+    }
+
+    Object.keys(remoteUsers).forEach((uid) => {
+      $(`#user-${uid}`).remove();
+      delete remoteUsers[uid];
+    });
+    
+    $("#remote-playerlist").empty();
+
+    if (client) {
+      await client.leave();
+      client = null;
+    }
+    window.rtcClient = null;
+
+    updateCounter();
+  }
+
+  function addChatMessage(username, text, avatar) {
+    const container = document.getElementById('chatMessages');
+    if (!container) return;
+
+    const msg = document.createElement('div');
+    msg.className = 'chat-message';
+    msg.innerHTML = `
+      <img class="chat-avatar" src="${avatar}" alt="${username}">
+      <div class="chat-content">
+        <a class="chat-username" href="${window.siteurl}${username}" target="_blank">${username}</a>
+        <div class="chat-text">${text}</div>
+      </div>
+    `;
+    
+    container.appendChild(msg);
+    
+    setTimeout(() => {
+      if (msg.isConnected) {
+        msg.classList.add('fade-out');
+        setTimeout(() => msg.remove(), 500);
+      }
+    }, 10000);
+  }
+
+  function LiveMessage(ID, value, type) {
+    $.post(
+      window.siteurl + "requests/request.php",
+      { f: type, id: ID, val: encodeURIComponent(value) },
+      function (response) {
+        if (response !== "404") {
+          $("#chatMessages").append(response);
+        }
+        $(".lmSize").val("");
+      }
+    );
+  }
+
+  function wireUI() {
+    $("body").on("click", "#leave, .viewer-quit-btn", function(e) {
+      e.preventDefault();
+      leave().then(() => {
+        window.location.href = window.siteurl;
+      });
+    });
+
+    $("body").on("click touchend", ".livesendmes", function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      const v = $(".lmSize").val();
+      if (v && v.trim()) {
+        LiveMessage(window.theLiveID, v, "livemessage");
+      }
+      return false;
+    });
+    
+    $("body").on("keydown", ".lmSize, .message-input", function (e) {
+      if (e.which === 13 || e.keyCode === 13) {
+        e.preventDefault();
+        const v = $(this).val();
+        if (v && v.trim()) {
+          LiveMessage(window.theLiveID, v, "livemessage");
+        }
+        return false;
+      }
+    });
+
+    $("body").on("click", ".end-stream-btn", function () {
+      $.post(
+        window.siteurl + "requests/request.php",
+        { f: "finishLiveStreaming", id: $(this).attr("id") },
+        function (resp) {
+          if (resp !== "404") {
+            $("body").append(resp);
+            setTimeout(() => $(".i_modal_bg_in").addClass("i_modal_display_in"), 200);
+          }
+        }
+      );
+    });
+
+    // ===== ONLY ONE .camclose handler - ends live properly =====
+    $("body").on("click", ".camclose", function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      if (e.stopImmediatePropagation) e.stopImmediatePropagation();
+
+      $(".i_modal_bg_in").removeClass("i_modal_display_in").remove();
+
+      var liveID = window.theLiveID || "";
+      if (!liveID) {
+        leave().then(function () {
+          window.location.href = window.siteurl || "/";
+        });
+        return;
+      }
+
+      $.post(
+        window.siteurl + "requests/request.php",
+        {
+          f: "finishLive",
+          lid: liveID
+        },
+        function (res) {
+          if (res == "finished") {
+            leave().then(function () {
+              window.location.href = window.siteurl || "/";
+            });
+          } else {
+            alert("Failed to end live (" + res + ").");
+            leave().then(function () {
+              window.location.href = window.siteurl || "/";
+            });
+          }
+        }
+      ).fail(function () {
+        leave().then(function () {
+          window.location.href = window.siteurl || "/";
+        });
+      });
+    });
+
+    setInterval(function(){
+      updateCounter();
+      updateSeatCount();
+    }, 10000);
+  }
+
+  document.addEventListener('click', function (e) {
+    var btn = e.target.closest('.tile-follow-btn');
+    if (!btn) return;
+    if (!window.siteurl || !window.jQuery) return;
+
+    var current  = btn.getAttribute('data-state') || 'not';
+    var followID = btn.getAttribute('data-follow') || '';
+    if (!followID) return;
+
+    var nextType = (current === 'following') ? 'uflw' : 'flw';
+
+    btn.disabled = true;
+
+    jQuery.post(
+      window.siteurl + 'requests/request.php',
+      {
+        f: 'freeFollow',
+        type: nextType,
+        follow: followID
+      },
+      function (resp) {
+        try {
+          if (typeof resp === 'string') {
+            resp = resp.replace(/^(\s*<br\s*\/?>)+/i, '');
+            resp = JSON.parse(resp);
+          }
+        } catch (e) {
+          console.log('tile follow JSON parse failed', e, resp);
+        }
+
+        var nowFollowing = (current !== 'following');
+        btn.classList.toggle('is-following', nowFollowing);
+        btn.textContent = nowFollowing ? 'Following' : '+ Follow';
+        btn.setAttribute('data-state', nowFollowing ? 'following' : 'not');
+      }
+    ).always(function () {
+      btn.disabled = false;
+    });
+  });
+
+  window.updateLiveLayout = updateLayout;
+  window.ensureRemoteTileAndPlay = ensureRemoteTileAndPlay;
+
+  $(document).ready(async function () {
+    debug('=== INIT ===');
+    
+    try {
+      await join();
+      wireUI();
+      
+      debug('=== INIT COMPLETE ===');
+    } catch (e) {
+      debug(`INIT ERROR: ${e.message}`);
+    }
+  });
+
+})(jQuery);
