@@ -1154,17 +1154,7 @@ footer{
       </div>
     </div>
 
-    <!-- House of Tara -->
-    <div class="portfolio-card">
-      <div class="portfolio-image">
-        <img src="tara.png" alt="House of Tara">
-      </div>
-      <div class="portfolio-info">
-        <span class="portfolio-category">Brand Campaign</span>
-        <h3 class="portfolio-title">House of Tara Legacy</h3>
-        <p class="portfolio-description">Heritage campaign celebrating 27 years of beauty excellence and leadership transition with style.</p>
-      </div>
-    </div>
+
 
     <!-- GAC Motors -->
     <div class="portfolio-card">
