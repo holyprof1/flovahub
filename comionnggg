@@ -1,2 +1,1775 @@
-Innovation coming soon
-relax
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Our Work - Savvy Media Africa - Culture-Moving Campaigns</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+
+:root{
+  --deep-navy:#001d3d;
+  --navy:#002855;
+  --bright-cyan:#00D4FF;
+  --cyan:#00A8E8;
+  --bright-green:#00FF88;
+  --green:#00E676;
+  --orange:#FF6B35;
+  --yellow:#FFB800;
+  --white:#FFFFFF;
+  --section-pad:8rem;
+}
+
+body{
+  font-family:'Sora',sans-serif;
+  color:var(--white);
+  background:var(--deep-navy);
+  overflow-x:hidden;
+  line-height:1.6;
+  font-weight:400;
+  cursor:none
+}
+
+.cursor{
+  position:fixed;
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:var(--bright-cyan);
+  pointer-events:none;
+  z-index:99999;
+  opacity:.8;
+  transition:transform .1s ease;
+  mix-blend-mode:screen;
+  box-shadow:0 0 12px var(--bright-cyan),0 0 24px rgba(0,212,255,.5)
+}
+
+.cursor-follower{
+  position:fixed;
+  width:32px;
+  height:32px;
+  border-radius:50%;
+  border:1.5px solid var(--bright-cyan);
+  pointer-events:none;
+  z-index:99998;
+  opacity:.4;
+  transition:all .25s ease;
+  box-shadow:inset 0 0 8px rgba(0,212,255,.3)
+}
+
+h1,h2,h3,h4,h5,h6{font-weight:500;line-height:1.1;letter-spacing:-0.02em}
+h1{font-size:clamp(3rem,9vw,10rem)}
+h2{font-size:clamp(2.2rem,6vw,5.5rem)}
+h3{font-size:clamp(1.6rem,4vw,2.8rem)}
+
+.underline-text{display:inline-block;position:relative;padding-bottom:6px}
+.underline-text::after{content:'';position:absolute;bottom:0;left:0;width:100%;height:4px;background:var(--bright-cyan);border-radius:2px}
+.underline-green::after{background:var(--bright-green)}
+.underline-orange::after{background:var(--orange)}
+
+/* ========== NAV ========== */
+nav{
+  position:fixed;
+  top:0;
+  width:100%;
+  padding:1.8rem 4rem;
+  z-index:9000;
+  transition:all .35s ease;
+  background:transparent
+}
+
+nav .nav-container{
+  max-width:1800px;
+  margin:0 auto;
+  display:flex;
+  justify-content:flex-start;
+  align-items:center;
+  gap:auto;
+  width:100%
+}
+
+.nav-logo{
+  flex-shrink:0;
+  margin-right:auto;
+  text-decoration:none
+}
+
+.nav-logo img{height:50px;width:auto;display:block;filter:brightness(1) invert(0)}
+
+.nav-links{
+  display:flex;
+  gap:2.6rem;
+  list-style:none;
+  align-items:center;
+  position:static
+}
+
+.nav-links a{
+  color:var(--white);
+  text-decoration:none;
+  font-weight:700;
+  font-size:1rem;
+  position:relative;
+  transition:.25s
+}
+
+.nav-links a::before{
+  content:'';
+  position:absolute;
+  bottom:-5px;
+  left:0;
+  width:0;
+  height:3px;
+  background:var(--bright-cyan);
+  transition:width .25s;
+  border-radius:2px
+}
+
+.nav-links a:hover::before{width:100%}
+.nav-links a.active::before{width:100%}
+
+.mobile-menu-btn{
+  display:none;
+  background:none;
+  border:none;
+  color:#fff;
+  font-size:2rem;
+  cursor:pointer;
+  z-index:9100;
+  flex-shrink:0
+}
+
+.nav-search{
+  background:none;
+  border:none;
+  color:#fff;
+  font-size:1.3rem;
+  cursor:pointer;
+  transition:.25s;
+  margin-left:2.6rem;
+  flex-shrink:0
+}
+
+.nav-search:hover{
+  color:var(--bright-cyan);
+  transform:scale(1.1)
+}
+
+nav.scrolled{
+  background:#ffffff;
+  box-shadow:0 4px 30px rgba(0,0,0,.12);
+  padding:1.2rem 4rem
+}
+
+nav.scrolled .nav-links a{color:var(--navy)}
+nav.scrolled .nav-links a::before{background:var(--navy)}
+nav.scrolled .nav-logo img{filter:none}
+nav.scrolled .nav-search{color:var(--navy)}
+nav.scrolled .nav-search:hover{color:var(--bright-cyan)}
+nav.scrolled .mobile-menu-btn{color:var(--navy)}
+
+.mobile-menu{
+  position:fixed;
+  top:0;
+  right:-100%;
+  width:80%;
+  max-width:300px;
+  height:100vh;
+  background:var(--deep-navy);
+  padding:6rem 2rem 2rem;
+  z-index:9050;
+  transition:right .35s ease;
+  overflow-y:auto;
+  box-shadow:-4px 0 20px rgba(0,0,0,.5)
+}
+
+.mobile-menu.open{
+  right:0
+}
+
+.mobile-menu ul{
+  list-style:none;
+  display:flex;
+  flex-direction:column;
+  gap:2rem
+}
+
+.mobile-menu a{
+  color:var(--white);
+  text-decoration:none;
+  font-weight:700;
+  font-size:1.2rem;
+  display:block;
+  transition:.25s
+}
+
+.mobile-menu a:hover{
+  color:var(--bright-cyan)
+}
+
+.mobile-menu-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.5);
+  z-index:9049;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .35s ease
+}
+
+.mobile-menu-overlay.open{
+  opacity:1;
+  pointer-events:auto
+}
+
+/* ========== HERO ========== */
+.hero{
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  position:relative;
+  padding:12rem 4rem 6rem;
+  overflow:hidden;
+  background:linear-gradient(135deg,var(--deep-navy) 0%,var(--navy) 100%)
+}
+
+.floating-shape{
+  position:absolute;
+  border-radius:50%;
+  filter:blur(120px);
+  opacity:.12;
+  pointer-events:none;
+  animation:float 20s ease-in-out infinite
+}
+
+.shape-1{
+  width:700px;
+  height:700px;
+  background:linear-gradient(135deg,var(--bright-cyan),var(--cyan));
+  top:10%;
+  left:5%
+}
+
+.shape-2{
+  width:600px;
+  height:600px;
+  background:linear-gradient(135deg,var(--orange),var(--yellow));
+  bottom:6%;
+  right:5%;
+  animation-delay:-10s
+}
+
+@keyframes float{
+  0%,100%{transform:translate(0,0) scale(1)}
+  25%{transform:translate(50px,-50px) scale(1.1)}
+  50%{transform:translate(80px,-80px) scale(1.2)}
+  75%{transform:translate(30px,-40px) scale(1.15)}
+}
+
+.hero-content{text-align:center;max-width:1600px;position:relative;z-index:2}
+
+.hero-title{
+  font-family:'Sora',sans-serif;
+  font-size:clamp(3rem,9.6vw,10.6rem);
+  font-weight:500;
+  line-height:1.05;
+  margin-bottom:1.6rem
+}
+
+.title-line{display:block;margin-bottom:.6rem}
+
+.word{
+  display:inline-block;
+  margin-right:.25em;
+  position:relative;
+  opacity:0;
+  transform:translate3d(0,100px,0) scale(.9) rotate(4deg)
+}
+
+.word.cyan{color:var(--bright-cyan)}
+.word.green{color:var(--bright-green)}
+.word.orange{color:var(--orange)}
+
+.word.gradient-cyan{
+  background:linear-gradient(135deg,var(--bright-cyan),var(--cyan));
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color:transparent;
+  color:transparent;
+  display:inline;
+  line-height:1
+}
+
+.hero-subtitle{
+  font-size:clamp(1.05rem,2vw,1.35rem);
+  color:rgba(255,255,255,.9);
+  max-width:900px;
+  margin:1.1rem auto 0;
+  line-height:1.9;
+  opacity:0;
+  font-weight:400
+}
+
+/* ========== SECTIONS ========== */
+.section{padding:var(--section-pad) 2rem}
+
+.section-label{
+  display:inline-block;
+  background:linear-gradient(135deg,var(--orange),var(--yellow));
+  color:var(--deep-navy);
+  padding:.7rem 1.6rem;
+  border-radius:999px;
+  font-size:.88rem;
+  font-weight:500;
+  text-transform:uppercase;
+  letter-spacing:2px;
+  margin-bottom:1.2rem
+}
+
+.section-title{
+  font-size:clamp(2.6rem,6vw,5.5rem);
+  font-weight:500;
+  margin-bottom:.8rem;
+  text-align:center
+}
+
+.section-subtitle{
+  font-size:1.25rem;
+  color:rgba(255,255,255,.85);
+  text-align:center;
+  max-width:900px;
+  margin:0 auto 3rem;
+  font-weight:400
+}
+
+.title-animate{display:inline-block;overflow:hidden}
+.title-animate .tword{display:inline-block;transform:translateY(115%);opacity:0}
+
+/* ========== PORTFOLIO GRID ========== */
+.portfolio-section{
+  padding:var(--section-pad) 2rem;
+  background:var(--navy)
+}
+
+.portfolio-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+  gap:3rem;
+  max-width:1600px;
+  margin:0 auto
+}
+
+.portfolio-card{
+  position:relative;
+  border-radius:24px;
+  overflow:hidden;
+  background:rgba(255,255,255,.04);
+  backdrop-filter:blur(10px);
+  border:1px solid rgba(0,212,255,.15);
+  transition:.45s;
+  opacity:0;
+  transform:translateY(50px);
+  cursor:pointer;
+  group:hover;
+  height:360px;
+  display:flex;
+  flex-direction:column
+}
+
+.portfolio-card::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:linear-gradient(135deg,rgba(0,212,255,.2) 0%,rgba(255,107,53,.2) 100%);
+  opacity:0;
+  transition:.45s;
+  pointer-events:none;
+  z-index:3
+}
+
+.portfolio-card:hover{
+  border-color:rgba(0,212,255,.4);
+  transform:translateY(-12px);
+  box-shadow:0 20px 60px rgba(0,212,255,.2)
+}
+
+.portfolio-card:hover::before{
+  opacity:1
+}
+
+.portfolio-image{
+  width:100%;
+  height:220px;
+  overflow:hidden;
+  position:relative;
+  flex-shrink:0
+}
+
+.portfolio-image::after{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:linear-gradient(180deg,rgba(0,0,0,0) 0%,rgba(0,29,61,.5) 100%);
+  z-index:2;
+  pointer-events:none
+}
+
+.portfolio-image img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  transition:transform .6s;
+  position:relative;
+  z-index:1
+}
+
+.portfolio-card:hover .portfolio-image img{
+  transform:scale(1.12)
+}
+
+.portfolio-info{
+  padding:2rem;
+  position:relative;
+  z-index:2;
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-end;
+  background:linear-gradient(180deg,rgba(0,29,61,.3) 0%,rgba(0,29,61,.8) 100%)
+}
+
+.portfolio-category{
+  font-size:.85rem;
+  color:var(--bright-green);
+  text-transform:uppercase;
+  letter-spacing:2px;
+  font-weight:600;
+  margin-bottom:.8rem;
+  display:inline-block;
+  background:rgba(0,255,136,.1);
+  padding:.4rem .8rem;
+  border-radius:999px;
+  width:fit-content
+}
+
+.portfolio-title{
+  font-size:1.6rem;
+  font-weight:600;
+  margin-bottom:.8rem;
+  color:var(--white);
+  line-height:1.2
+}
+
+.portfolio-description{
+  font-size:.95rem;
+  color:rgba(255,255,255,.8);
+  line-height:1.6
+}
+
+/* ========== FEATURED PROJECT (MIGHTY) ========== */
+.featured-section{
+  padding:var(--section-pad) 2rem;
+  background:linear-gradient(135deg,rgba(0,212,255,.05) 0%,rgba(255,107,53,.05) 100%);
+  border-top:2px solid rgba(0,212,255,.2);
+  border-bottom:2px solid rgba(0,212,255,.2)
+}
+
+.featured-container{
+  max-width:1600px;
+  margin:0 auto
+}
+
+.featured-header{
+  text-align:center;
+  margin-bottom:4rem
+}
+
+.featured-header h2{
+  margin-bottom:1rem
+}
+
+.featured-project{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:4rem;
+  align-items:center;
+  opacity:0;
+  transform:translateY(50px)
+}
+
+.featured-images{
+  position:relative;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:2rem
+}
+
+.featured-img-main{
+  grid-column:1/-1;
+  border-radius:20px;
+  overflow:hidden;
+  box-shadow:0 30px 80px rgba(0,0,0,.4)
+}
+
+.featured-img-main img{
+  width:100%;
+  height:auto;
+  display:block;
+  transition:transform .6s
+}
+
+.featured-project:hover .featured-img-main img{
+  transform:scale(1.05)
+}
+
+.featured-img-small{
+  border-radius:16px;
+  overflow:hidden;
+  box-shadow:0 15px 40px rgba(0,0,0,.3);
+  height:280px
+}
+
+.featured-img-small img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  transition:transform .6s
+}
+
+.featured-project:hover .featured-img-small img{
+  transform:scale(1.08)
+}
+
+.featured-content{
+  position:relative;
+  z-index:2
+}
+
+.featured-client{
+  color:var(--bright-cyan);
+  font-weight:600;
+  text-transform:uppercase;
+  letter-spacing:2px;
+  margin-bottom:.8rem;
+  font-size:.95rem
+}
+
+.featured-title{
+  font-size:clamp(2rem,5vw,3.5rem);
+  font-weight:600;
+  margin-bottom:2rem;
+  line-height:1.2
+}
+
+.featured-challenge,.featured-solution,.featured-results{
+  margin-bottom:2.4rem
+}
+
+.featured-label{
+  font-size:.95rem;
+  color:var(--bright-green);
+  text-transform:uppercase;
+  letter-spacing:2px;
+  font-weight:700;
+  margin-bottom:.8rem
+}
+
+.featured-text{
+  font-size:1.1rem;
+  line-height:1.85;
+  color:rgba(255,255,255,.9);
+  margin-bottom:0
+}
+
+.results-metrics{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:1.5rem;
+  margin-top:2rem
+}
+
+.metric{
+  background:rgba(0,212,255,.1);
+  border:1px solid rgba(0,212,255,.2);
+  padding:1.5rem;
+  border-radius:16px;
+  text-align:center;
+  transition:.35s
+}
+
+.metric:hover{
+  background:rgba(0,212,255,.2);
+  border-color:rgba(0,212,255,.4)
+}
+
+.metric-number{
+  font-size:2.4rem;
+  font-weight:700;
+  background:linear-gradient(135deg,var(--bright-cyan),var(--orange));
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color:transparent;
+  margin-bottom:.5rem
+}
+
+.metric-label{
+  font-size:.95rem;
+  color:rgba(255,255,255,.8);
+  text-transform:uppercase;
+  letter-spacing:1.5px;
+  font-weight:500
+}
+
+/* ========== CASE STUDIES CAROUSEL ========== */
+.case-studies-section{
+  padding:var(--section-pad) 2rem;
+  background:var(--deep-navy)
+}
+
+.case-swiper-container{
+  max-width:1600px;
+  margin:0 auto
+}
+
+.swiper-slide{
+  height:auto !important
+}
+
+.case-study-card{
+  background:rgba(255,255,255,.04);
+  border-radius:24px;
+  overflow:hidden;
+  border:1px solid rgba(0,212,255,.15);
+  transition:.45s;
+  display:flex;
+  flex-direction:column;
+  height:100%;
+}
+
+.case-study-card:hover{
+  border-color:rgba(0,212,255,.3);
+  transform:translateY(-8px);
+  box-shadow:0 25px 60px rgba(0,212,255,.15)
+}
+
+.case-image{
+  width:100%;
+  height:280px;
+  overflow:hidden;
+  position:relative
+}
+
+.case-image img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  transition:transform .6s
+}
+
+.case-study-card:hover .case-image img{
+  transform:scale(1.1)
+}
+
+.case-content{
+  padding:2.4rem;
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  background:linear-gradient(180deg,rgba(0,29,61,.3) 0%,rgba(0,29,61,.9) 100%)
+}
+
+.case-client{
+  font-size:.9rem;
+  color:var(--bright-cyan);
+  text-transform:uppercase;
+  letter-spacing:2px;
+  font-weight:600;
+  margin-bottom:1rem;
+  display:inline-block;
+  background:rgba(0,212,255,.1);
+  padding:.5rem 1rem;
+  border-radius:999px;
+  border:1px solid rgba(0,212,255,.3);
+  width:fit-content
+}
+
+.case-title{
+  font-size:1.8rem;
+  font-weight:600;
+  margin-bottom:1.5rem;
+  color:var(--white);
+  line-height:1.2
+}
+
+.case-challenge{
+  margin-bottom:1.8rem;
+  padding-bottom:1.8rem;
+  border-bottom:1px solid rgba(0,212,255,.1)
+}
+
+.case-challenge-label{
+  font-size:.85rem;
+  color:var(--bright-green);
+  text-transform:uppercase;
+  letter-spacing:1.5px;
+  font-weight:600;
+  margin-bottom:.6rem;
+  display:block
+}
+
+.case-challenge-text{
+  font-size:1rem;
+  line-height:1.7;
+  color:rgba(255,255,255,.85)
+}
+
+.case-solution{
+  margin-bottom:1.8rem;
+  padding-bottom:1.8rem;
+  border-bottom:1px solid rgba(0,212,255,.1)
+}
+
+.case-solution-label{
+  font-size:.85rem;
+  color:var(--bright-green);
+  text-transform:uppercase;
+  letter-spacing:1.5px;
+  font-weight:600;
+  margin-bottom:.6rem;
+  display:block
+}
+
+.case-solution-text{
+  font-size:1rem;
+  line-height:1.7;
+  color:rgba(255,255,255,.85)
+}
+
+.case-results{
+  margin-top:auto
+}
+
+.case-results-label{
+  font-size:.85rem;
+  color:var(--bright-green);
+  text-transform:uppercase;
+  letter-spacing:1.5px;
+  font-weight:600;
+  margin-bottom:.8rem;
+  display:block
+}
+
+.case-results-text{
+  font-size:1rem;
+  line-height:1.8;
+  color:rgba(255,255,255,.85);
+  background:rgba(0,255,136,.08);
+  padding:1rem;
+  border-radius:12px;
+  border-left:3px solid var(--bright-green)
+}
+
+.swiper-pagination{
+  margin-top:3rem !important
+}
+
+.swiper-pagination-bullet{
+  background:rgba(0,212,255,.4);
+  width:12px;
+  height:12px;
+  opacity:1
+}
+
+.swiper-pagination-bullet-active{
+  background:var(--bright-cyan)
+}
+
+/* ========== STATS SECTION ========== */
+.stats-section{
+  padding:var(--section-pad) 2rem;
+  background:var(--navy)
+}
+
+.stats-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+  gap:3rem;
+  max-width:1400px;
+  margin:0 auto;
+  margin-top:2rem
+}
+
+.stat-card{
+  text-align:center;
+  opacity:0;
+  transform:scale(.8);
+  position:relative;
+  padding:2.4rem 2rem;
+  background:rgba(0,212,255,.05);
+  border:1px solid rgba(0,212,255,.15);
+  border-radius:20px;
+  transition:.45s;
+  overflow:hidden
+}
+
+.stat-card::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:radial-gradient(500px 500px at 50% 50%,rgba(0,212,255,.1),transparent);
+  opacity:0;
+  transition:.4s;
+  pointer-events:none
+}
+
+.stat-card:hover{
+  transform:scale(1);
+  border-color:rgba(0,212,255,.3);
+  background:rgba(0,212,255,.08)
+}
+
+.stat-card:hover::before{
+  opacity:1
+}
+
+.stat-number{
+  font-size:clamp(2.5rem,6vw,4rem);
+  font-weight:700;
+  background:linear-gradient(135deg,var(--bright-cyan),var(--orange));
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color:transparent;
+  margin-bottom:.8rem;
+  position:relative;
+  z-index:1
+}
+
+.stat-label{
+  font-size:1.2rem;
+  font-weight:600;
+  color:var(--white);
+  position:relative;
+  z-index:1
+}
+
+/* ========== CTA SECTION ========== */
+.cta-section{
+  padding:var(--section-pad) 2rem;
+  background:linear-gradient(135deg,var(--bright-cyan),var(--orange));
+  text-align:center
+}
+
+.cta-title{
+  font-family:'Sora',sans-serif;
+  font-size:clamp(2.6rem,7vw,5.5rem);
+  font-weight:500;
+  margin-bottom:.6rem;
+  color:var(--deep-navy)
+}
+
+.cta-subtitle{
+  font-size:1.4rem;
+  margin-bottom:2.2rem;
+  opacity:.96;
+  color:var(--deep-navy);
+  font-weight:400
+}
+
+.btn-primary{
+  background:var(--deep-navy);
+  color:var(--bright-cyan);
+  padding:1.1rem 2.8rem;
+  border-radius:999px;
+  text-decoration:none;
+  font-weight:500;
+  font-size:1.05rem;
+  display:inline-flex;
+  align-items:center;
+  gap:.7rem;
+  box-shadow:0 10px 40px rgba(0,0,0,.3);
+  opacity:0;
+  transition:transform .2s,box-shadow .2s;
+  border:none;
+  cursor:pointer
+}
+
+.btn-primary:hover{
+  transform:translateY(-2px);
+  box-shadow:0 15px 50px rgba(0,0,0,.4)
+}
+
+/* ========== FOOTER ========== */
+footer{
+  background:var(--deep-navy);
+  padding:4rem 2rem 2rem;
+  border-top:1px solid rgba(0,212,255,.15)
+}
+
+.footer-grid{
+  display:grid;
+  grid-template-columns:2fr 1fr 1fr 1fr;
+  gap:4.6rem;
+  max-width:1600px;
+  margin:0 auto 3.6rem
+}
+
+.footer-brand h3{font-size:2.3rem;font-weight:500;margin-bottom:.8rem}
+
+.footer-brand p{
+  color:rgba(255,255,255,.7);
+  line-height:1.9;
+  margin-bottom:1.4rem;
+  font-weight:400
+}
+
+.social-links{display:flex;gap:1rem}
+
+.social-link{
+  width:48px;
+  height:48px;
+  background:rgba(0,212,255,.1);
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#fff;
+  transition:.25s;
+  border:1px solid rgba(0,212,255,.2);
+  text-decoration:none
+}
+
+.social-link:hover{
+  background:var(--bright-cyan);
+  color:var(--deep-navy);
+  transform:translateY(-3px) rotate(360deg);
+  border-color:var(--bright-cyan)
+}
+
+.footer-column h4{font-size:1.15rem;margin-bottom:.8rem;font-weight:500}
+.footer-links{list-style:none}
+.footer-links li{margin-bottom:.6rem}
+
+.footer-links a{
+  color:rgba(255,255,255,.75);
+  text-decoration:none;
+  transition:.25s;
+  font-weight:400
+}
+
+.footer-links a:hover{
+  color:var(--bright-cyan);
+  padding-left:8px
+}
+
+.footer-bottom{
+  border-top:1px solid rgba(0,212,255,.15);
+  padding-top:1.6rem;
+  text-align:center;
+  color:rgba(255,255,255,.65);
+  font-weight:400
+}
+
+.developer-credit a{
+  color:var(--bright-cyan);
+  text-decoration:none;
+  transition:.25s
+}
+
+.developer-credit a:hover{
+  text-decoration:underline
+}
+
+/* ========== SCROLL TOP ========== */
+.scroll-top{
+  position:fixed;
+  bottom:26px;
+  right:26px;
+  width:68px;
+  height:68px;
+  border-radius:50%;
+  z-index:9000;
+  display:grid;
+  place-items:center;
+  cursor:pointer;
+  background:conic-gradient(var(--bright-cyan) calc(var(--scroll,0)*1%),rgba(0,212,255,.15) 0);
+  box-shadow:0 12px 35px rgba(0,212,255,.38),inset 0 0 0 8px rgba(0,29,61,.5);
+  transform:scale(.9) rotate(0deg);
+  opacity:0;
+  pointer-events:none;
+  transition:.25s ease;
+  border:none
+}
+
+.scroll-top.visible{
+  opacity:1;
+  pointer-events:auto;
+  transform:scale(1) rotate(0deg);
+}
+
+.scroll-top.scrolling{
+  animation:rotateProgress 0.8s linear infinite;
+}
+
+@keyframes rotateProgress{
+  0%{transform:scale(1) rotate(0deg)}
+  100%{transform:scale(1) rotate(360deg)}
+}
+
+.scroll-top .inner{
+  width:50px;
+  height:50px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  background:var(--navy);
+  color:#fff;
+  font-weight:500
+}
+
+.scroll-top .pct{font-size:.92rem}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width:1200px){
+  .portfolio-grid{grid-template-columns:repeat(2,1fr)}
+  .results-metrics{grid-template-columns:1fr}
+}
+
+@media (max-width:1024px){
+  nav{padding:1.4rem 2rem}
+  .featured-project{grid-template-columns:1fr}
+  .featured-images{grid-template-columns:1fr}
+  .featured-img-main{grid-column:1}
+  .footer-grid{grid-template-columns:1fr 1fr}
+}
+
+@media (max-width:768px){
+  nav{padding:1.2rem 2rem}
+  nav .nav-container{justify-content:space-between}
+  .nav-links{display:none}
+  .mobile-menu-btn{display:block;order:3}
+  .nav-search{order:2;margin-left:auto;margin-right:1rem}
+  .nav-logo{order:1}
+  
+  :root{--section-pad:4rem}
+  .portfolio-grid,.footer-grid{grid-template-columns:1fr}
+  
+  body{cursor:default}
+  .cursor,.cursor-follower{display:none}
+}
+</style>
+
+</head>
+<body>
+
+<!-- Custom Cursor -->
+<div class="cursor"></div>
+<div class="cursor-follower"></div>
+
+<!-- ========== NAV ========== -->
+<nav id="nav">
+  <div class="nav-container">
+    <a href="https://tobi.savvymediaafrica.com" class="nav-logo">
+      <img src="https://demoo.savvymediaafrica.com/wp-content/uploads/2025/10/Savvy-Media-Africa-Logo-1.png" alt="Savvy Media Africa">
+    </a>
+    <ul class="nav-links">
+      <li><a href="https://tobi.savvymediaafrica.com">Home</a></li>
+      <li><a href="/about">About</a></li>
+      <li><a href="/work" class="active">Work</a></li>
+      <li><a href="https://magazine.savvymediaafrica.com">Magazine</a></li>
+      <li><a href="/contact">Contact</a></li>
+    </ul>
+    <button class="nav-search" aria-label="Search"><i class="fas fa-search"></i></button>
+    <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Menu"><i class="fas fa-bars"></i></button>
+  </div>
+</nav>
+
+<!-- Mobile Menu -->
+<div class="mobile-menu-overlay" id="mobileMenuOverlay"></div>
+<div class="mobile-menu" id="mobileMenu">
+  <ul>
+    <li><a href="https://tobi.savvymediaafrica.com">Home</a></li>
+    <li><a href="/about">About</a></li>
+    <li><a href="/work">Work</a></li>
+    <li><a href="https://magazine.savvymediaafrica.com">Magazine</a></li>
+    <li><a href="/contact">Contact</a></li>
+  </ul>
+</div>
+
+<!-- ========== HERO ========== -->
+<section class="hero">
+  <div class="floating-shape shape-1" data-parallax="-12"></div>
+  <div class="floating-shape shape-2" data-parallax="14"></div>
+
+  <div class="hero-content">
+    <div class="hero-title">
+      <div class="title-line">
+        <span class="word">Work</span>
+        <span class="word cyan">That</span>
+      </div>
+      <div class="title-line">
+        <span class="word green">Moves</span>
+        <span class="word orange">Culture</span>
+      </div>
+      <div class="title-line">
+        <span class="word">& <span class="gradient-cyan">Delivers</span></span>
+        <span class="word">Results</span>
+      </div>
+    </div>
+
+    <p class="hero-subtitle">Campaigns that sparked conversations, moved markets, and proved African creativity is world-class. Here's what we've built.</p>
+  </div>
+</section>
+
+<!-- ========== PORTFOLIO GRID ========== -->
+<section class="portfolio-section section">
+  <div style="text-align:center;margin-bottom:3rem">
+    <span class="section-label">Our Portfolio</span>
+    <h2 class="section-title title-animate"><span class="tword">Featured</span> <span class="tword">Projects</span></h2>
+    <p class="section-subtitle">A selection of campaigns that show our range and impact</p>
+  </div>
+
+  <div class="portfolio-grid">
+    <!-- MTN Yello Couch -->
+    <div class="portfolio-card">
+      <div class="portfolio-image">
+        <img src="mtn-yello.png" alt="MTN Yello Couch">
+      </div>
+      <div class="portfolio-info">
+        <span class="portfolio-category">Content Production</span>
+        <h3 class="portfolio-title">MTN Y'ello Couch</h3>
+        <p class="portfolio-description">Original content series connecting MTN with youth audiences through authentic storytelling and cultural conversations.</p>
+      </div>
+    </div>
+
+    <!-- House of Tara -->
+    <div class="portfolio-card">
+      <div class="portfolio-image">
+        <img src="tara.png" alt="House of Tara">
+      </div>
+      <div class="portfolio-info">
+        <span class="portfolio-category">Brand Campaign</span>
+        <h3 class="portfolio-title">House of Tara Legacy</h3>
+        <p class="portfolio-description">Heritage campaign celebrating 27 years of beauty excellence and leadership transition with style.</p>
+      </div>
+    </div>
+
+    <!-- GAC Motors -->
+    <div class="portfolio-card">
+      <div class="portfolio-image">
+        <img src="gac.png" alt="GAC Motors">
+      </div>
+      <div class="portfolio-info">
+        <span class="portfolio-category">Brand Launch</span>
+        <h3 class="portfolio-title">GAC Motors Nigeria</h3>
+        <p class="portfolio-description">Strategic brand introduction campaign positioning GAC as a premium automotive choice in the Nigerian market.</p>
+      </div>
+    </div>
+
+    <!-- Dogtas Lagos -->
+    <div class="portfolio-card">
+      <div class="portfolio-image">
+        <img src="Dogtas.png" alt="Dogtas Lagos">
+      </div>
+      <div class="portfolio-info">
+        <span class="portfolio-category">Retail Campaign</span>
+        <h3 class="portfolio-title">Dogtas Lagos Expansion</h3>
+        <p class="portfolio-description">Strategic campaign launching Dogtas supermarket presence across Lagos with community-focused messaging.</p>
+      </div>
+    </div>
+
+    <!-- MTN Nigeria -->
+    <div class="portfolio-card">
+      <div class="portfolio-image">
+        <img src="mtn-naija.png" alt="MTN Nigeria">
+      </div>
+      <div class="portfolio-info">
+        <span class="portfolio-category">National Campaign</span>
+        <h3 class="portfolio-title">MTN See Naija</h3>
+        <p class="portfolio-description">Nationwide storytelling campaign celebrating Nigerian diversity and positioning MTN as an enabler of possibilities.</p>
+      </div>
+    </div>
+
+    <!-- Silverbird Cinemas -->
+    <div class="portfolio-card">
+      <div class="portfolio-image">
+        <img src="cinema.png" alt="Silverbird Cinemas">
+      </div>
+      <div class="portfolio-info">
+        <span class="portfolio-category">Entertainment Marketing</span>
+        <h3 class="portfolio-title">Silverbird Cinemas</h3>
+        <p class="portfolio-description">Comprehensive marketing strategy driving moviegoer engagement and positioning Silverbird as Africa's premier cinema destination.</p>
+      </div>
+    </div>
+
+    <!-- Mimikasu Restaurant -->
+    <div class="portfolio-card">
+      <div class="portfolio-image">
+        <img src="mimikasu.png" alt="Mimikasu Restaurant">
+      </div>
+      <div class="portfolio-info">
+        <span class="portfolio-category">F&B Marketing</span>
+        <h3 class="portfolio-title">Mimikasu Restaurant</h3>
+        <p class="portfolio-description">Lifestyle branding and social media strategy establishing Mimikasu as Lagos's go-to destination for authentic cuisine.</p>
+      </div>
+    </div>
+
+    <!-- Africa Re -->
+    <div class="portfolio-card">
+      <div class="portfolio-image">
+        <img src="Africare.png" alt="Africa Re">
+      </div>
+      <div class="portfolio-info">
+        <span class="portfolio-category">Event Production</span>
+        <h3 class="portfolio-title">Africa Re 40 Years</h3>
+        <p class="portfolio-description">World-class milestone event showcasing 40 years of African reinsurance excellence and industry leadership.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== FEATURED PROJECT (MIGHTY) ========== -->
+<section class="featured-section section">
+  <div class="featured-container">
+    <div class="featured-header">
+      <span class="section-label">Featured Work</span>
+      <h2 class="section-title title-animate"><span class="tword">The</span> <span class="tword">Mighty</span> <span class="tword">Project</span></h2>
+    </div>
+
+    <div class="featured-project">
+      <div class="featured-images">
+        <div class="featured-img-main">
+          <img src="mtn-yello.png" alt="MTN Yello Couch">
+        </div>
+        <div class="featured-img-small">
+          <img src="mtn-naija.png" alt="MTN Campaign">
+        </div>
+        <div class="featured-img-small">
+          <img src="https://images.unsplash.com/photo-1559136555-9303baea8ebd?q=80&w=800&auto=format&fit=crop" alt="Content Impact">
+        </div>
+      </div>
+
+      <div class="featured-content">
+        <div style="display:inline-block;background:rgba(0,212,255,.15);padding:.6rem 1.4rem;border-radius:999px;margin-bottom:1.5rem;border:1px solid rgba(0,212,255,.3)">
+          <span class="featured-client">MTN Nigeria</span>
+        </div>
+        
+        <h2 class="featured-title">Y'ello Couch: Building <span style="color:var(--bright-cyan)">Culture</span></h2>
+
+        <p style="font-size:1.15rem;color:rgba(255,255,255,.85);margin-bottom:2.4rem;line-height:1.8;font-style:italic;">
+          A content series that transformed how a telecom company speaks to its audience. Not about products. About conversations.
+        </p>
+
+        <div class="featured-challenge">
+          <span class="featured-label">→ The Challenge</span>
+          <p class="featured-text">
+            MTN Nigeria needed more than connectivity. They needed to deepen their connection with younger African audiences and position themselves as a genuine driver of meaningful culture, not just a telecom provider pushing services.
+          </p>
+        </div>
+
+        <div class="featured-solution">
+          <span class="featured-label">→ Our Solution</span>
+          <p class="featured-text">
+            We developed and managed MTN's original content production from ground zero. The Y'ello Couch series became a mix of interviews and authentic conversations with industry executives and cultural influencers. Every episode was strategically crafted, with full IP ownership and storytelling direction handled by Savvy. We didn't just produce content—we created a cultural conversation starter.
+          </p>
+        </div>
+
+        <div class="featured-results">
+          <span class="featured-label">→ The Results</span>
+          <p class="featured-text">
+            The series became a recognized MTN property almost immediately. High engagement across digital platforms. More importantly: MTN went from being a telecom company to being seen as a <span style="color:var(--bright-green);font-weight:600;">driver of meaningful conversations</span> in Africa. The Y'ello Couch became iconic.
+          </p>
+
+          <div class="results-metrics">
+            <div class="metric">
+              <div class="metric-number">High</div>
+              <div class="metric-label">Engagement Rate</div>
+            </div>
+            <div class="metric">
+              <div class="metric-number">Iconic</div>
+              <div class="metric-label">Brand Property</div>
+            </div>
+            <div class="metric">
+              <div class="metric-number">Awarded</div>
+              <div class="metric-label">Recognition</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== SERVICES BREAKDOWN ========== -->
+<section class="portfolio-section section" style="background:var(--deep-navy)">
+  <div style="text-align:center;margin-bottom:3rem">
+    <span class="section-label">How We Work</span>
+    <h2 class="section-title title-animate"><span class="tword">Services</span> <span class="tword">That</span> <span class="tword">Deliver</span></h2>
+    <p class="section-subtitle">What we bring to every project to ensure success</p>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:2.5rem;max-width:1400px;margin:0 auto">
+    <!-- Service 1 -->
+    <div style="background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.2);padding:2.4rem;border-radius:20px;opacity:0;transform:translateY(50px);transition:.6s" class="service-item">
+      <div style="width:60px;height:60px;background:linear-gradient(135deg,var(--bright-cyan),var(--cyan));border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:1.8rem;color:var(--deep-navy);margin-bottom:1.6rem">
+        <i class="fas fa-lightbulb"></i>
+      </div>
+      <h3 style="font-size:1.4rem;font-weight:600;margin-bottom:.8rem">Creative Strategy</h3>
+      <p style="color:rgba(255,255,255,.8);line-height:1.7">Bold ideas rooted in cultural insight, designed to move markets and build lasting brand equity.</p>
+    </div>
+
+    <!-- Service 2 -->
+    <div style="background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.2);padding:2.4rem;border-radius:20px;opacity:0;transform:translateY(50px);transition:.6s" class="service-item">
+      <div style="width:60px;height:60px;background:linear-gradient(135deg,var(--bright-green),var(--green));border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:1.8rem;color:var(--deep-navy);margin-bottom:1.6rem">
+        <i class="fas fa-video"></i>
+      </div>
+      <h3 style="font-size:1.4rem;font-weight:600;margin-bottom:.8rem">Content Production</h3>
+      <p style="color:rgba(255,255,255,.8);line-height:1.7">Video, photography, graphics, and storytelling—cinematic quality from concept to final cut.</p>
+    </div>
+
+    <!-- Service 3 -->
+    <div style="background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.2);padding:2.4rem;border-radius:20px;opacity:0;transform:translateY(50px);transition:.6s" class="service-item">
+      <div style="width:60px;height:60px;background:linear-gradient(135deg,var(--orange),var(--yellow));border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:1.8rem;color:var(--deep-navy);margin-bottom:1.6rem">
+        <i class="fas fa-megaphone"></i>
+      </div>
+      <h3 style="font-size:1.4rem;font-weight:600;margin-bottom:.8rem">PR & Reputation</h3>
+      <p style="color:rgba(255,255,255,.8);line-height:1.7">Media relations, brand positioning, and stakeholder communication that builds trust.</p>
+    </div>
+
+    <!-- Service 4 -->
+    <div style="background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.2);padding:2.4rem;border-radius:20px;opacity:0;transform:translateY(50px);transition:.6s" class="service-item">
+      <div style="width:60px;height:60px;background:linear-gradient(135deg,var(--bright-cyan),var(--bright-green));border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:1.8rem;color:var(--deep-navy);margin-bottom:1.6rem">
+        <i class="fas fa-chart-line"></i>
+      </div>
+      <h3 style="font-size:1.4rem;font-weight:600;margin-bottom:.8rem">Digital Strategy</h3>
+      <p style="color:rgba(255,255,255,.8);line-height:1.7">Social media, influencer partnerships, and digital campaigns that drive engagement and reach.</p>
+    </div>
+
+    <!-- Service 5 -->
+    <div style="background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.2);padding:2.4rem;border-radius:20px;opacity:0;transform:translateY(50px);transition:.6s" class="service-item">
+      <div style="width:60px;height:60px;background:linear-gradient(135deg,var(--cyan),var(--orange));border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:1.8rem;color:var(--deep-navy);margin-bottom:1.6rem">
+        <i class="fas fa-handshake"></i>
+      </div>
+      <h3 style="font-size:1.4rem;font-weight:600;margin-bottom:.8rem">Event Production</h3>
+      <p style="color:rgba(255,255,255,.8);line-height:1.7">World-class events from concept through execution—every detail matters.</p>
+    </div>
+
+    <!-- Service 6 -->
+    <div style="background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.2);padding:2.4rem;border-radius:20px;opacity:0;transform:translateY(50px);transition:.6s" class="service-item">
+      <div style="width:60px;height:60px;background:linear-gradient(135deg,var(--bright-green),var(--orange));border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:1.8rem;color:var(--deep-navy);margin-bottom:1.6rem">
+        <i class="fas fa-check-circle"></i>
+      </div>
+      <h3 style="font-size:1.4rem;font-weight:600;margin-bottom:.8rem">Measurement & Results</h3>
+      <p style="color:rgba(255,255,255,.8);line-height:1.7">Data-driven insights showing real ROI, engagement, and cultural impact of every campaign.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ========== CASE STUDIES CAROUSEL ========== -->
+<section class="case-studies-section section">
+  <div class="case-swiper-container">
+    <div style="text-align:center;margin-bottom:3rem">
+      <span class="section-label">Case Studies</span>
+      <h2 class="section-title title-animate"><span class="tword">Deep</span> <span class="tword">Dives</span> <span class="tword">Into</span> <span class="tword">Success</span></h2>
+      <p class="section-subtitle">Detailed breakdowns of our most impactful campaigns</p>
+    </div>
+
+    <div class="swiper caseSwiper">
+      <div class="swiper-wrapper">
+        
+        <!-- Case Study 1: House of Tara -->
+        <div class="swiper-slide">
+          <div class="case-study-card">
+            <div class="case-image">
+              <img src="tara.png" alt="House of Tara">
+            </div>
+            <div class="case-content">
+              <span class="case-client">House of Tara</span>
+              <h3 class="case-title">27 Years of Beauty Excellence</h3>
+              
+              <div class="case-challenge">
+                <span class="case-challenge-label">Challenge</span>
+                <p class="case-challenge-text">Celebrate legacy while positioning for future relevance in a changing beauty market landscape.</p>
+              </div>
+              
+              <div class="case-solution">
+                <span class="case-solution-label">Solution</span>
+                <p class="case-solution-text">Heritage-focused campaign blending storytelling, PR, and brand positioning to honor the past and inspire the future.</p>
+              </div>
+              
+              <div class="case-results">
+                <span class="case-results-label">Results</span>
+                <p class="case-results-text">✓ Strengthened brand legacy ✓ Industry recognition ✓ Smooth leadership transition</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Case Study 2: Africa Re -->
+        <div class="swiper-slide">
+          <div class="case-study-card">
+            <div class="case-image">
+              <img src="Africare.png" alt="Africa Re">
+            </div>
+            <div class="case-content">
+              <span class="case-client">African Reinsurance Corp</span>
+              <h3 class="case-title">40 Years of Reinsurance Excellence</h3>
+              
+              <div class="case-challenge">
+                <span class="case-challenge-label">Challenge</span>
+                <p class="case-challenge-text">Host a world-class milestone event that impresses stakeholders and reinforces market leadership position.</p>
+              </div>
+              
+              <div class="case-solution">
+                <span class="case-solution-label">Solution</span>
+                <p class="case-solution-text">Full event production managing RSVP, guest relations, venue styling, catering, sound, lighting, and on-site coordination for a flawless experience.</p>
+              </div>
+              
+              <div class="case-results">
+                <span class="case-results-label">Results</span>
+                <p class="case-results-text">✓ Professionally executed event ✓ Impressed stakeholders ✓ Reinforced excellence standard</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Case Study 3: MTN See Naija -->
+        <div class="swiper-slide">
+          <div class="case-study-card">
+            <div class="case-image">
+              <img src="mtn-naija.png" alt="MTN Campaign">
+            </div>
+            <div class="case-content">
+              <span class="case-client">MTN Nigeria</span>
+              <h3 class="case-title">See Naija Campaign</h3>
+              
+              <div class="case-challenge">
+                <span class="case-challenge-label">Challenge</span>
+                <p class="case-challenge-text">Showcase Nigeria's diversity and position MTN as a connector of culture and opportunity across the nation.</p>
+              </div>
+              
+              <div class="case-solution">
+                <span class="case-solution-label">Solution</span>
+                <p class="case-solution-text">Nationwide storytelling campaign capturing diverse Nigerian narratives and positioning MTN as an enabler of possibilities.</p>
+              </div>
+              
+              <div class="case-results">
+                <span class="case-results-label">Results</span>
+                <p class="case-results-text">✓ Nationwide reach ✓ Strong brand love ✓ Cultural resonance</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Case Study 4: Dogtas Lagos -->
+        <div class="swiper-slide">
+          <div class="case-study-card">
+            <div class="case-image">
+              <img src="Dogtas.png" alt="Dogtas Lagos">
+            </div>
+            <div class="case-content">
+              <span class="case-client">Dogtas Supermarket</span>
+              <h3 class="case-title">Lagos Retail Expansion</h3>
+              
+              <div class="case-challenge">
+                <span class="case-challenge-label">Challenge</span>
+                <p class="case-challenge-text">Establish Dogtas as the premier supermarket chain across Lagos while building community trust and loyalty.</p>
+              </div>
+              
+              <div class="case-solution">
+                <span class="case-solution-label">Solution</span>
+                <p class="case-solution-text">Community-focused retail campaign emphasizing quality, affordability, and local connections. Integrated PR, social media, and grassroots activation.</p>
+              </div>
+              
+              <div class="case-results">
+                <span class="case-results-label">Results</span>
+                <p class="case-results-text">✓ Strong market penetration ✓ High customer loyalty ✓ Community engagement</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Case Study 5: GAC Motors -->
+        <div class="swiper-slide">
+          <div class="case-study-card">
+            <div class="case-image">
+              <img src="gac.png" alt="GAC Motors">
+            </div>
+            <div class="case-content">
+              <span class="case-client">GAC Motors</span>
+              <h3 class="case-title">Premium Automotive Launch</h3>
+              
+              <div class="case-challenge">
+                <span class="case-challenge-label">Challenge</span>
+                <p class="case-challenge-text">Introduce GAC Motors to the Nigerian market and position as a premium automotive choice in a competitive landscape.</p>
+              </div>
+              
+              <div class="case-solution">
+                <span class="case-solution-label">Solution</span>
+                <p class="case-solution-text">Strategic brand introduction campaign with showroom launches, test drive experiences, and premium positioning across digital and traditional media.</p>
+              </div>
+              
+              <div class="case-results">
+                <span class="case-results-label">Results</span>
+                <p class="case-results-text">✓ Successful market entry ✓ Premium brand positioning ✓ Strong customer interest</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="swiper-pagination"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== STATS SECTION ========== -->
+<section class="stats-section section">
+  <div style="text-align:center;margin-bottom:2rem">
+    <span class="section-label">By The Numbers</span>
+    <h2 class="section-title title-animate"><span class="tword">Our</span> <span class="tword">Impact</span></h2>
+    <p class="section-subtitle">The real results of culture-moving work</p>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-number">50+</div>
+      <div class="stat-label">Campaigns Delivered</div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-number">100+</div>
+      <div class="stat-label">African Brands Transformed</div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-number">25+</div>
+      <div class="stat-label">Awards & Recognition</div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-number">100%</div>
+      <div class="stat-label">Client Satisfaction</div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== CTA ========== -->
+<section class="cta-section section" id="contact">
+  <h2 class="cta-title">Ready for Your <span class="underline-text" style="color:var(--deep-navy)">Next</span> Wave?</h2>
+  <p class="cta-subtitle">Let's create a campaign that moves culture and delivers results.</p>
+  <a href="mailto:hello@savvymediaafrica.com" class="btn-primary" style="opacity:1">Start Your Project <i class="fas fa-paper-plane"></i></a>
+</section>
+
+<!-- ========== FOOTER ========== -->
+<footer id="contact">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <h3>SAVVY MEDIA</h3>
+      <p>Africa's leading creative and media agency. Where creativity lives, results matter.</p>
+      <div class="social-links">
+        <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+        <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+        <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+        <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
+        <a href="#" class="social-link"><i class="fab fa-youtube"></i></a>
+      </div>
+    </div>
+    <div class="footer-column">
+      <h4>Services</h4>
+      <ul class="footer-links">
+        <li><a href="#">Creative Campaigns</a></li>
+        <li><a href="#">Media & Distribution</a></li>
+        <li><a href="#">PR & Reputation</a></li>
+        <li><a href="#">Event Production</a></li>
+      </ul>
+    </div>
+    <div class="footer-column">
+      <h4>Company</h4>
+      <ul class="footer-links">
+        <li><a href="/about">About Us</a></li>
+        <li><a href="/work">Our Work</a></li>
+        <li><a href="https://magazine.savvymediaafrica.com">Magazine</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </div>
+    <div class="footer-column">
+      <h4>Contact</h4>
+      <ul class="footer-links">
+        <li><a href="mailto:hello@savvymediaafrica.com">hello@savvymediaafrica.com</a></li>
+        <li><a href="tel:+2348134737798">+234 813 473 7798</a></li>
+        <li>Impact Hub, Ikoyi, Lagos</li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>&copy; 2025 Savvy Media Africa. All rights reserved.</p>
+  </div>
+</footer>
+
+<!-- ========== SCROLL-TO-TOP ========== -->
+<button class="scroll-top" id="scrollTopBtn" aria-label="Back to top">
+  <div class="inner"><span class="pct" id="scrollPct">0%</span></div>
+</button>
+
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script>
+  gsap.registerPlugin(ScrollTrigger);
+
+  // Custom Cursor
+  const cursor = document.querySelector('.cursor');
+  const cursorFollower = document.querySelector('.cursor-follower');
+  
+  document.addEventListener('mousemove', (e) => {
+    cursor.style.left = (e.clientX - 4) + 'px';
+    cursor.style.top = (e.clientY - 4) + 'px';
+    
+    setTimeout(() => {
+      cursorFollower.style.left = (e.clientX - 16) + 'px';
+      cursorFollower.style.top = (e.clientY - 16) + 'px';
+    }, 60);
+  });
+
+  document.addEventListener('mouseover', (e) => {
+    const interactive = e.target.closest('a, button, [role="button"], .portfolio-card, .stat-card, .case-study-card, input, textarea');
+    if (interactive) {
+      cursor.style.transform = 'scale(1.6)';
+      cursor.style.opacity = '1';
+      cursorFollower.style.transform = 'scale(2.2)';
+      cursorFollower.style.borderColor = 'var(--bright-cyan)';
+      cursorFollower.style.boxShadow = '0 0 16px var(--bright-cyan), inset 0 0 12px rgba(0,212,255,.4)';
+    }
+  });
+
+  document.addEventListener('mouseout', (e) => {
+    const interactive = e.target.closest('a, button, [role="button"], .portfolio-card, .stat-card, .case-study-card, input, textarea');
+    if (interactive) {
+      cursor.style.transform = 'scale(1)';
+      cursor.style.opacity = '0.8';
+      cursorFollower.style.transform = 'scale(1)';
+      cursorFollower.style.borderColor = 'var(--bright-cyan)';
+      cursorFollower.style.boxShadow = 'inset 0 0 8px rgba(0,212,255,.3)';
+    }
+  });
+
+  // Navigation scroll behavior
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll',()=>{
+    window.scrollY>100?nav.classList.add('scrolled'):nav.classList.remove('scrolled')
+  });
+
+  // Mobile Menu
+  const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+  const mobileMenu = document.getElementById('mobileMenu');
+  const mobileMenuOverlay = document.getElementById('mobileMenuOverlay');
+  const mobileMenuLinks = document.querySelectorAll('.mobile-menu a');
+
+  function closeMobileMenu(){
+    mobileMenu.classList.remove('open');
+    mobileMenuOverlay.classList.remove('open');
+    document.body.style.overflow = 'auto';
+  }
+
+  mobileMenuBtn.addEventListener('click', ()=>{
+    mobileMenu.classList.contains('open') ? closeMobileMenu() : (mobileMenu.classList.add('open'), mobileMenuOverlay.classList.add('open'), document.body.style.overflow = 'hidden');
+  });
+
+  mobileMenuOverlay.addEventListener('click', closeMobileMenu);
+  mobileMenuLinks.forEach(link => link.addEventListener('click', closeMobileMenu));
+
+  // Smooth scroll
+  document.querySelectorAll('a[href^="#"]').forEach(a=>{
+    a.addEventListener('click',e=>{
+      const t=document.querySelector(a.getAttribute('href'));
+      if(t){e.preventDefault();t.scrollIntoView({behavior:'smooth',block:'start'})}
+    });
+  });
+
+  // ANIMATIONS
+  gsap.to('.hero-title .word',{
+    y:0,scale:1,rotation:0,opacity:1,duration:1,stagger:0.06,ease:'power4.out',delay:.05
+  });
+
+  gsap.to('.hero-subtitle',{opacity:1,duration:.8,delay:.8});
+
+  gsap.utils.toArray('[data-parallax]').forEach(el=>{
+    const amt = +el.getAttribute('data-parallax') || 10;
+    gsap.to(el,{y:amt,scrollTrigger:{trigger:'.hero',start:'top top',end:'bottom top',scrub:1}});
+  });
+
+  document.querySelectorAll('.title-animate').forEach(title=>{
+    gsap.to(title.querySelectorAll('.tword'),{scrollTrigger:{trigger:title,start:'top 82%'},y:0,opacity:1,duration:.55,stagger:.07,ease:'power3.out'});
+  });
+
+  gsap.utils.toArray('.portfolio-card').forEach((card,i)=>{
+    gsap.to(card,{scrollTrigger:{trigger:card,start:'top 90%'},y:0,opacity:1,duration:.6,delay:i*0.05,ease:'back.out(1.5)'});
+  });
+
+  gsap.utils.toArray('.service-item').forEach((item,i)=>{
+    gsap.to(item,{scrollTrigger:{trigger:item,start:'top 90%'},y:0,opacity:1,duration:.6,delay:i*0.07,ease:'back.out(1.5)'});
+  });
+
+  gsap.to('.featured-project',{scrollTrigger:{trigger:'.featured-section',start:'top 75%'},y:0,opacity:1,duration:.8,ease:'back.out(1.7)'});
+
+  gsap.utils.toArray('.stat-card').forEach((card,i)=>{
+    gsap.to(card,{scrollTrigger:{trigger:card,start:'top 90%'},scale:1,opacity:1,duration:.65,delay:i*0.1,ease:'back.out(1.5)'});
+  });
+
+  gsap.to('.btn-primary',{scrollTrigger:{trigger:'.cta-section',start:'top 85%'},opacity:1,duration:.6});
+
+  // Swiper
+  const caseSwiper = new Swiper('.caseSwiper',{
+    slidesPerView:1,
+    spaceBetween:30,
+    loop:true,
+    autoplay:{delay:6000},
+    pagination:{el:'.swiper-pagination',clickable:true},
+    breakpoints:{
+      768:{slidesPerView:2},
+      1024:{slidesPerView:3}
+    }
+  });
+
+  // Scroll-to-top
+  const scrollBtn=document.getElementById('scrollTopBtn');
+  const scrollPct=document.getElementById('scrollPct');
+  let scrollTimeout;
+
+  function setScrollProgress(){
+    const st=window.scrollY;
+    const h=document.documentElement.scrollHeight - innerHeight;
+    const p=h>0?Math.round((st/h)*100):0;
+    document.documentElement.style.setProperty('--scroll',p);
+    scrollBtn.style.setProperty('--scroll',p);
+    scrollPct.textContent=p+'%';
+    
+    if(st>380){
+      scrollBtn.classList.add('visible');
+      scrollBtn.classList.add('scrolling');
+      clearTimeout(scrollTimeout);
+      scrollTimeout = setTimeout(()=>{scrollBtn.classList.remove('scrolling');}, 500);
+    } else {
+      scrollBtn.classList.remove('visible','scrolling');
+      clearTimeout(scrollTimeout);
+    }
+  }
+
+  setScrollProgress();
+  window.addEventListener('scroll',setScrollProgress,{passive:true});
+  scrollBtn.addEventListener('click',()=>scrollTo({top:0,behavior:'smooth'}));
+</script>
+
+</body>
+</html>
