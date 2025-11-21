@@ -1221,11 +1221,7 @@ footer{
       <div class="portfolio-image">
         <img src="Africare.png" alt="Africa Re">
       </div>
-      <div class="portfolio-info">
-        <span class="portfolio-category">Event Production</span>
-        <h3 class="portfolio-title">Africa Re 40 Years</h3>
-        <p class="portfolio-description">World-class milestone event showcasing 40 years of African reinsurance excellence and industry leadership.</p>
-      </div>
+     
     </div>
   </div>
 </section>
