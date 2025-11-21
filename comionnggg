@@ -1497,9 +1497,7 @@ footer{
             <div class="case-image">
               <img src="gac.png" alt="GAC Motors">
             </div>
-            <div class="case-content">
-              <span class="case-client">GAC Motors</span>
-              <h3 class="case-title">Premium Automotive Launch</h3>
+         
               
               <div class="case-challenge">
                 <span class="case-challenge-label">Challenge</span>
